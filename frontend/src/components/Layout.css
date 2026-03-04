@@ -1,0 +1,180 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #e2e8f0;
+}
+
+/* Toggle button - visible on small screens */
+.layout-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.layout-toggle-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #e2e8f0;
+  border-radius: 1px;
+}
+
+@media (max-width: 768px) {
+  .layout-toggle {
+    display: flex;
+  }
+}
+
+/* Sidebar */
+.layout-sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: rgba(15, 23, 42, 0.97);
+  border-right: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.layout-sidebar-inner {
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.layout-brand {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  padding: 0.25rem 0;
+}
+
+.layout-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.layout-nav a {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.layout-nav a:hover {
+  color: #f8fafc;
+  background: rgba(51, 65, 85, 0.5);
+}
+
+.layout-nav-active {
+  color: #38bdf8 !important;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.12) !important;
+}
+
+.layout-user-block {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.layout-user {
+  display: block;
+  font-size: 0.9rem;
+  color: #f8fafc;
+  font-weight: 500;
+}
+
+.layout-user-role {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+}
+
+.layout-logout {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #f87171;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+
+.layout-logout:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+}
+
+.layout-main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.layout-sidebar-overlay {
+  display: none;
+}
+
+/* Mobile: sidebar as overlay */
+@media (max-width: 768px) {
+  .layout-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .layout-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .layout-sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .layout-main {
+    padding: 1rem;
+    padding-top: 4rem; /* space for toggle button */
+  }
+}

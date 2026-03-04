@@ -1,0 +1,169 @@
+.admin-audits-page {
+  max-width: 960px;
+}
+
+.admin-audits-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.admin-audits-sub {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-audits-back {
+  margin-bottom: 0.5rem;
+}
+
+.admin-audits-meta {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.admin-audits-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.admin-audits-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-audits-table th,
+.admin-audits-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.admin-audits-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.admin-audits-table td {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.admin-audits-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.admin-audits-link:hover {
+  text-decoration: underline;
+}
+
+.admin-audits-section {
+  margin-top: 1.75rem;
+}
+
+.admin-audits-section h2 {
+  font-size: 1.1rem;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.admin-audits-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.admin-audits-category-card {
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 0.9rem 1rem;
+}
+
+.admin-audits-category-card h3 {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin: 0 0 0.25rem;
+}
+
+.admin-audits-category-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0 0 0.75rem;
+}
+
+.admin-audits-evidence-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.admin-audits-evidence-thumbs img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.admin-audits-video {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  background: #020617;
+  font-size: 0.75rem;
+  color: #e2e8f0;
+}
+
+.admin-audits-notes {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.admin-audits-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.admin-audits-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.admin-audits-btn-approve {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-audits-btn-reject {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fca5a5;
+}
+
+.admin-audits-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+

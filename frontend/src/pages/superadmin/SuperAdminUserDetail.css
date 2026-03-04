@@ -1,0 +1,122 @@
+.superadmin-detail-page {
+  max-width: 480px;
+}
+
+.superadmin-detail-back {
+  margin-bottom: 1rem;
+}
+
+.superadmin-detail-back a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.superadmin-detail-back a:hover {
+  color: #38bdf8;
+}
+
+.superadmin-detail-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 1rem;
+}
+
+.superadmin-detail-loading,
+.superadmin-detail-error {
+  padding: 1rem;
+  color: #94a3b8;
+}
+
+.superadmin-detail-error {
+  color: #fca5a5;
+  margin-bottom: 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+}
+
+.superadmin-detail-success {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 8px;
+  color: #86efac;
+  font-size: 0.9rem;
+}
+
+.superadmin-detail-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.superadmin-detail-form label:first-of-type {
+  margin-top: 0;
+}
+
+.superadmin-detail-form input,
+.superadmin-detail-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.superadmin-detail-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.superadmin-detail-checkbox input {
+  width: auto;
+}
+
+.superadmin-detail-role-readonly {
+  padding: 0.5rem 0.75rem;
+  background: rgba(251, 191, 36, 0.15);
+  border-radius: 6px;
+  color: #fbbf24;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.superadmin-detail-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.superadmin-detail-actions button {
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.superadmin-detail-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.superadmin-detail-cancel {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  align-self: center;
+}
+
+.superadmin-detail-cancel:hover {
+  color: #38bdf8;
+}

@@ -1,0 +1,107 @@
+.superadmin-create-page {
+  max-width: 480px;
+}
+
+.superadmin-create-back {
+  margin-bottom: 1rem;
+}
+
+.superadmin-create-back a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.superadmin-create-back a:hover {
+  color: #38bdf8;
+}
+
+.superadmin-create-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.35rem;
+}
+
+.superadmin-create-sub {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.superadmin-create-success {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 8px;
+  color: #86efac;
+  font-size: 0.9rem;
+}
+
+.superadmin-create-error {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+.superadmin-create-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.superadmin-create-form label:first-of-type {
+  margin-top: 0;
+}
+
+.superadmin-create-form input,
+.superadmin-create-form select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.superadmin-create-form input::placeholder {
+  color: #64748b;
+}
+
+.superadmin-create-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.superadmin-create-actions button {
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.superadmin-create-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.superadmin-create-cancel {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  align-self: center;
+}
+
+.superadmin-create-cancel:hover {
+  color: #38bdf8;
+}

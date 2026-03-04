@@ -1,0 +1,108 @@
+.owner-evidence-list h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 1rem;
+}
+
+.owner-evidence-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.owner-evidence-list-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.owner-evidence-list-actions .owner-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.owner-evidence-table-wrap {
+  overflow-x: auto;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+}
+
+.owner-evidence-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.owner-evidence-table th,
+.owner-evidence-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.owner-evidence-table th {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.owner-evidence-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.owner-evidence-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.owner-evidence-thumb-video {
+  background: rgba(30, 41, 59, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.evidence-status {
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.evidence-status-pending { color: #fbbf24; }
+.evidence-status-approved { color: #22c55e; }
+.evidence-status-rejected { color: #f87171; }
+.evidence-status-flagged { color: #a78bfa; }
+
+.owner-evidence-notes {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #94a3b8;
+}
+
+.owner-evidence-delete-btn {
+  background: transparent;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #f87171;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.owner-evidence-delete-btn:hover {
+  background: rgba(248, 113, 113, 0.15);
+}

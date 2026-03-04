@@ -1,0 +1,144 @@
+.apply-page {
+  max-width: 640px;
+}
+
+.apply-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.apply-intro {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.apply-error {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: rgba(248, 113, 113, 0.15);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+.apply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.apply-section {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.apply-section h2 {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.apply-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.apply-form label:first-of-type {
+  margin-top: 0;
+}
+
+.apply-form input[type="text"],
+.apply-form input[type="url"],
+.apply-form input[type="tel"],
+.apply-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.apply-form input:focus,
+.apply-form textarea:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.apply-file-row {
+  margin-top: 0.75rem;
+}
+
+.apply-file-row label {
+  margin-top: 0;
+}
+
+.apply-file-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.apply-file-wrap input[type="file"] {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.apply-link {
+  color: #38bdf8;
+  font-size: 0.85rem;
+}
+
+.apply-uploading {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.apply-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.apply-checkbox input {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.apply-actions {
+  margin-top: 0.5rem;
+}
+
+.apply-actions button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.apply-actions button:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.apply-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

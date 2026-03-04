@@ -1,0 +1,149 @@
+.owner-photos-page {
+  max-width: 640px;
+}
+
+.owner-photos-back {
+  margin-bottom: 1rem;
+}
+
+.owner-photos-back a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.owner-photos-back a:hover {
+  color: #38bdf8;
+}
+
+.owner-photos-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.35rem;
+}
+
+.owner-photos-intro {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.owner-photos-loading,
+.owner-photos-empty {
+  color: #94a3b8;
+  padding: 1rem 0;
+}
+
+.owner-photos-error {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: rgba(248, 113, 113, 0.15);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+.owner-photos-success {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 8px;
+  color: #86efac;
+  font-size: 0.9rem;
+}
+
+.owner-photos-form {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.owner-photos-form label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.owner-photos-form label:first-of-type {
+  margin-top: 0;
+}
+
+.owner-photos-form select,
+.owner-photos-form input[type="file"] {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
+.owner-photos-form button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.owner-photos-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.owner-photos-list h2 {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.owner-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.owner-photos-item {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.owner-photos-item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.owner-photos-caption {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.owner-photos-remove {
+  display: block;
+  width: 100%;
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  color: #f87171;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.owner-photos-remove:hover {
+  background: rgba(248, 113, 113, 0.1);
+}

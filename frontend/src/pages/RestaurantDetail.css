@@ -1,0 +1,159 @@
+.restaurant-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.restaurant-detail-back {
+  margin-bottom: 1rem;
+}
+
+.restaurant-detail-back a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.restaurant-detail-back a:hover {
+  color: #38bdf8;
+}
+
+.restaurant-detail-loading,
+.restaurant-detail-error {
+  padding: 2rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.restaurant-detail-error {
+  color: #fca5a5;
+}
+
+.restaurant-detail-header {
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-detail-header h1 {
+  font-size: 1.75rem;
+  color: #f8fafc;
+  margin: 0 0 0.25rem;
+}
+
+.restaurant-detail-city {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.restaurant-detail-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .restaurant-detail-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.restaurant-detail-info {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.restaurant-detail-info p {
+  margin: 0 0 1rem;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.restaurant-detail-info p:last-child {
+  margin-bottom: 0;
+}
+
+.restaurant-detail-info strong {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.restaurant-detail-info a {
+  color: #38bdf8;
+}
+
+.restaurant-detail-map-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.restaurant-detail-map-section {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  min-height: 280px;
+}
+
+.restaurant-detail-map {
+  width: 100%;
+  height: 280px;
+  z-index: 0;
+}
+
+.restaurant-detail-hero {
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-detail-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 21 / 9;
+}
+
+.restaurant-detail-section {
+  margin-top: 2rem;
+}
+
+.restaurant-detail-section h2 {
+  font-size: 1.15rem;
+  color: #f8fafc;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.restaurant-detail-gallery-intro {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: -0.5rem 0 1rem;
+}
+
+.restaurant-detail-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.restaurant-detail-photo-fig {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.restaurant-detail-photo-fig img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.restaurant-detail-photo-fig figcaption {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+}

@@ -1,0 +1,190 @@
+.superadmin-assignments-page {
+  max-width: 1000px;
+}
+
+.superadmin-assignments-header {
+  margin-bottom: 1.5rem;
+}
+
+.superadmin-assignments-header h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin: 0 0 0.35rem;
+}
+
+.superadmin-assignments-sub {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.superadmin-assignments-error {
+  color: #f87171;
+  padding: 0.75rem 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.superadmin-assignments-section {
+  margin-bottom: 2rem;
+}
+
+.superadmin-assignments-section h2 {
+  font-size: 1.15rem;
+  color: #f8fafc;
+  margin: 0 0 0.75rem;
+}
+
+.superadmin-assignments-hint {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.superadmin-assignments-filters {
+  margin-bottom: 1rem;
+}
+
+.superadmin-assignments-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.superadmin-assignments-filter-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.superadmin-assignments-filter-row select,
+.superadmin-assignments-search {
+  padding: 0.4rem 0.6rem;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.9rem;
+  min-width: 100px;
+}
+
+.superadmin-assignments-search {
+  min-width: 180px;
+}
+
+.superadmin-assignments-filter-row select:focus,
+.superadmin-assignments-search:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.superadmin-assignments-loading,
+.superadmin-assignments-empty {
+  color: #94a3b8;
+  padding: 1rem 0;
+}
+
+.superadmin-assignments-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.superadmin-assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.superadmin-assignments-table th,
+.superadmin-assignments-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.superadmin-assignments-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.superadmin-assignments-table td {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.superadmin-assignments-role {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.superadmin-assignments-role-admin {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.superadmin-assignments-role-auditor {
+  background: rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+}
+
+.superadmin-assignments-unassigned-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.superadmin-assignments-unassigned-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.superadmin-assignments-unassigned-name {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.superadmin-assignments-unassigned-count {
+  font-size: 0.85rem;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.superadmin-assignments-assign-select {
+  padding: 0.4rem 0.6rem;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 6px;
+  color: #38bdf8;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.superadmin-assignments-assign-select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.superadmin-assignments-assigning {
+  font-size: 0.85rem;
+  color: #64748b;
+}

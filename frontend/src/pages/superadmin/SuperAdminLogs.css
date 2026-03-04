@@ -1,0 +1,212 @@
+.superadmin-logs-page {
+  max-width: 960px;
+}
+
+.superadmin-logs-header {
+  margin-bottom: 1.5rem;
+}
+
+.superadmin-logs-header h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin: 0 0 0.35rem;
+}
+
+.superadmin-logs-sub {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.superadmin-logs-loading,
+.superadmin-logs-empty {
+  color: #94a3b8;
+  padding: 2rem;
+}
+
+.superadmin-logs-error,
+.superadmin-logs-error-banner {
+  color: #f87171;
+  padding: 0.75rem 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.superadmin-logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.superadmin-logs-card {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  overflow: hidden;
+}
+
+.superadmin-logs-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(51, 65, 85, 0.3);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.superadmin-logs-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.superadmin-logs-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.superadmin-logs-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.superadmin-logs-btn-report {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+.superadmin-logs-btn-report:hover {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.superadmin-logs-btn-rollback {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+}
+
+.superadmin-logs-btn-rollback:hover {
+  background: rgba(248, 113, 113, 0.25);
+}
+
+.superadmin-logs-print-icon {
+  font-size: 1rem;
+}
+
+.superadmin-logs-card-body {
+  padding: 1rem 1.25rem;
+}
+
+.superadmin-logs-section {
+  margin-bottom: 1rem;
+}
+
+.superadmin-logs-section:last-child {
+  margin-bottom: 0;
+}
+
+.superadmin-logs-section h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 0.5rem;
+}
+
+.superadmin-logs-section p,
+.superadmin-logs-done-list {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.superadmin-logs-done-list {
+  list-style: none;
+  padding: 0;
+}
+
+.superadmin-logs-done-list li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.superadmin-logs-done-list li:last-child {
+  border-bottom: none;
+}
+
+.superadmin-logs-muted {
+  color: #64748b;
+}
+
+/* Modal */
+.superadmin-logs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.superadmin-logs-modal {
+  background: #1e293b;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+.superadmin-logs-modal h2 {
+  font-size: 1.2rem;
+  color: #f8fafc;
+  margin: 0 0 0.75rem;
+}
+
+.superadmin-logs-modal p {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  margin: 0 0 1.25rem;
+}
+
+.superadmin-logs-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.superadmin-logs-btn-cancel {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+.superadmin-logs-btn-cancel:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.superadmin-logs-btn-confirm {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.superadmin-logs-btn-confirm:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.superadmin-logs-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

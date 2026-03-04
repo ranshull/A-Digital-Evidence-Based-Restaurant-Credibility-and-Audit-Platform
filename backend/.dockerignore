@@ -1,0 +1,35 @@
+# Virtual env and local Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+
+# Local DB and media (use Supabase in production)
+db.sqlite3
+media/
+staticfiles/
+
+# Environment and secrets (inject at runtime)
+.env
+.env.*
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Git and tests
+.git/
+.gitignore
+*.md
+tests/
+*_test.py
+test_*.py
+.pytest_cache/
+.coverage
+htmlcov/

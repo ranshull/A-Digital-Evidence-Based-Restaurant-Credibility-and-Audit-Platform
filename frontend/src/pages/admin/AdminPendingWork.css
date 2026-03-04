@@ -1,0 +1,146 @@
+.admin-pending-work h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.admin-pending-intro {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-error-banner {
+  color: #f87171;
+  padding: 0.75rem 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.admin-pending-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-pending-item {
+  margin-bottom: 0.5rem;
+}
+
+.admin-pending-item a,
+.admin-pending-item .admin-pending-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  color: #38bdf8;
+  text-decoration: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-pending-item a:hover,
+.admin-pending-item .admin-pending-link:hover:not(:disabled) {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.admin-pending-item .admin-pending-link:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-pending-mine {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: normal;
+}
+
+.admin-pending-badge {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.25);
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.admin-pending-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.admin-pending-modal {
+  background: #1e293b;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+.admin-pending-modal h2 {
+  font-size: 1.2rem;
+  color: #f8fafc;
+  margin: 0 0 0.75rem;
+}
+
+.admin-pending-modal p {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  margin: 0 0 1.25rem;
+}
+
+.admin-pending-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.admin-pending-btn-cancel {
+  padding: 0.5rem 1rem;
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.admin-pending-btn-cancel:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.admin-pending-btn-accept {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-pending-btn-accept:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.admin-pending-btn-accept:disabled,
+.admin-pending-btn-cancel:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

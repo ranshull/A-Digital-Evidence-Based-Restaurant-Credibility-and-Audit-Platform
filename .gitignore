@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+
+# Python virtualenv
+backend/venv/
+
+# Node modules
+frontend/node_modules/
+
+# Build artifacts
+backend/staticfiles/
+backend/media/
+frontend/dist/
+
+# Environment / secrets
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

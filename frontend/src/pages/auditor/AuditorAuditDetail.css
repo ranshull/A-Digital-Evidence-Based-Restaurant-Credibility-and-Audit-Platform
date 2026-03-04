@@ -1,0 +1,204 @@
+.auditor-audit-detail-page {
+  max-width: 960px;
+}
+
+.auditor-audit-detail-page h1 {
+  font-size: 1.5rem;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.auditor-meta {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.auditor-audit-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.auditor-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.auditor-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #fff;
+  font-weight: 600;
+}
+
+.auditor-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auditor-btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: #e2e8f0;
+}
+
+.auditor-section h2 {
+  font-size: 1.1rem;
+  color: #f8fafc;
+  margin-bottom: 0.35rem;
+}
+
+.auditor-subtext {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.auditor-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.auditor-category-card {
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 0.9rem 1rem;
+}
+
+.auditor-category-card h3 {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin: 0 0 0.25rem;
+}
+
+.auditor-category-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0 0 0.75rem;
+}
+
+.auditor-evidence-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.auditor-evidence-thumb {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auditor-evidence-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.auditor-evidence-label {
+  font-size: 0.75rem;
+  color: #e2e8f0;
+}
+
+.auditor-upload-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.auditor-upload-bar label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.auditor-upload-bar select,
+.auditor-upload-notes {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.auditor-upload-files input[type="file"] {
+  margin-top: 0.25rem;
+}
+
+.auditor-section-scoring {
+  margin-top: 2rem;
+}
+
+.auditor-scoring-controls {
+  margin-bottom: 1rem;
+}
+
+.auditor-scoring-controls select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.auditor-scoring-panel {
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 1rem;
+}
+
+.auditor-scoring-subs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.auditor-scoring-sub label {
+  display: block;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  margin-bottom: 0.25rem;
+}
+
+.auditor-scoring-sub select,
+.auditor-scoring-sub input[type="text"] {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+@media print {
+  .layout-sidebar,
+  .layout-toggle,
+  .auditor-audit-actions,
+  .auditor-upload-bar {
+    display: none !important;
+  }
+
+  .auditor-audit-detail-page {
+    max-width: none;
+  }
+}
+

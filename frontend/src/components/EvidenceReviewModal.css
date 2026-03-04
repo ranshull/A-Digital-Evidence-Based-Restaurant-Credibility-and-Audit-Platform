@@ -1,0 +1,152 @@
+.evidence-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.evidence-modal {
+  background: #1e293b;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.evidence-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.evidence-modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #f8fafc;
+}
+
+.evidence-modal-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.25rem;
+}
+
+.evidence-modal-close:hover {
+  color: #f8fafc;
+}
+
+.evidence-modal-body {
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+}
+
+.evidence-modal-meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.evidence-modal-media {
+  margin: 1rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.evidence-modal-media img,
+.evidence-modal-media video {
+  display: block;
+  max-width: 100%;
+  max-height: 50vh;
+  margin: 0 auto;
+}
+
+.evidence-modal-description {
+  margin-top: 1rem;
+}
+
+.evidence-modal-description strong {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.evidence-modal-description p {
+  margin: 0.35rem 0 0;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.evidence-modal-notes {
+  margin-top: 1rem;
+}
+
+.evidence-modal-notes label {
+  display: block;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 0.35rem;
+}
+
+.evidence-modal-notes textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.evidence-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.evidence-modal-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.evidence-modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.evidence-modal-btn.approve {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+}
+
+.evidence-modal-btn.reject {
+  background: transparent;
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+}
+
+.evidence-modal-btn.flag {
+  background: rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+}
