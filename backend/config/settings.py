@@ -110,7 +110,7 @@ AUTH_USER_MODEL = 'core.User'
 # Comma-separated origins, e.g. https://yourapp.vercel.app,http://localhost:5173
 CORS_ALLOWED_ORIGINS = [
     x.strip() for x in os.environ.get(
-        'CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173'
+        'CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,https://a-digital-evidence-based-restaurant.vercel.app'
     ).split(',') if x.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
