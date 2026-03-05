@@ -116,7 +116,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://a-digital-evidence-based-restaurant.vercel.app"
+    "https://a-digital-evidence-based-restaurant.vercel.app",
+    "https://a-digital-evidence-based-restaurant.onrender.com"
 ]
 
 REST_FRAMEWORK = {
