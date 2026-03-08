@@ -1,5 +1,7 @@
 .superadmin-users-page {
   max-width: 900px;
+  padding: var(--content-padding, 1.5rem) 0;
+  color: var(--color-text);
 }
 
 .superadmin-users-header {
@@ -8,12 +10,12 @@
 
 .superadmin-users-header h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin: 0 0 0.35rem;
 }
 
 .superadmin-users-sub {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin: 0 0 1rem;
 }
@@ -29,25 +31,25 @@
   flex: 1;
   min-width: 200px;
   padding: 0.5rem 0.75rem;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  color: #f8fafc;
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
 .superadmin-users-search::placeholder {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .superadmin-users-search:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: var(--color-primary);
 }
 
 .superadmin-users-create-btn {
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: var(--color-primary);
   color: #fff;
   border-radius: 8px;
   font-weight: 600;
@@ -61,15 +63,15 @@
 }
 
 .superadmin-users-loading {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   padding: 2rem;
 }
 
 .superadmin-users-table-wrap {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
 }
 
 .superadmin-users-table {
@@ -81,24 +83,24 @@
 .superadmin-users-table td {
   padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .superadmin-users-table th {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
 .superadmin-users-table td {
   font-size: 0.9rem;
-  color: #e2e8f0;
+  color: var(--color-text);
 }
 
 .superadmin-users-table tbody tr:hover {
-  background: rgba(51, 65, 85, 0.3);
+  background: var(--color-bg-subtle);
 }
 
 .superadmin-role {
@@ -109,14 +111,14 @@
   font-weight: 600;
 }
 
-.superadmin-role-user { background: rgba(148, 163, 184, 0.2); color: #94a3b8; }
-.superadmin-role-owner { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
-.superadmin-role-auditor { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
-.superadmin-role-admin { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-.superadmin-role-super-admin { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+.superadmin-role-user { background: rgba(100, 116, 139, 0.2); color: var(--color-text-muted); }
+.superadmin-role-owner { background: rgba(37, 99, 235, 0.15); color: var(--color-primary); }
+.superadmin-role-auditor { background: rgba(139, 92, 246, 0.2); color: #7c3aed; }
+.superadmin-role-admin { background: rgba(34, 197, 94, 0.2); color: #16a34a; }
+.superadmin-role-super-admin { background: rgba(245, 158, 11, 0.25); color: #d97706; }
 
 .superadmin-users-edit-link {
-  color: #38bdf8;
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -126,7 +128,7 @@
 }
 
 .superadmin-users-empty {
-  color: #64748b;
+  color: var(--color-text-muted);
   text-align: center;
   padding: 2rem !important;
 }

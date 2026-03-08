@@ -1,5 +1,6 @@
 .superadmin-audits-page {
   max-width: 960px;
+  color: var(--color-text);
 }
 
 .superadmin-audits-header {
@@ -8,14 +9,17 @@
 
 .superadmin-audits-header h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  font-weight: 700;
+  color: var(--color-text);
   margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
 }
 
 .superadmin-audits-sub {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin: 0;
+  line-height: 1.45;
 }
 
 .superadmin-audits-filters {
@@ -27,37 +31,49 @@
   flex-direction: column;
   gap: 0.3rem;
   font-size: 0.8rem;
-  color: #64748b;
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 .superadmin-audits-filters select {
-  padding: 0.35rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  background: rgba(15, 23, 42, 0.9);
-  color: #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-size: 0.9rem;
+  min-width: 160px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.superadmin-audits-filters select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent);
 }
 
 .superadmin-audits-error {
-  color: #f87171;
+  color: var(--color-error);
   padding: 0.75rem 1rem;
-  background: rgba(248, 113, 113, 0.1);
-  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
+  border-radius: 10px;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 
 .superadmin-audits-loading,
 .superadmin-audits-empty {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   padding: 1.5rem 0;
 }
 
 .superadmin-audits-table-wrap {
   overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(30, 41, 59, 0.5);
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .superadmin-audits-table {
@@ -69,25 +85,54 @@
 .superadmin-audits-table td {
   padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .superadmin-audits-table th {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
 .superadmin-audits-table td {
   font-size: 0.9rem;
-  color: #e2e8f0;
+  color: var(--color-text);
+}
+
+.superadmin-audits-table tbody tr:hover {
+  background: var(--color-bg-subtle);
+}
+
+.superadmin-audits-table td select {
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  background: var(--color-bg-subtle);
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.superadmin-audits-table td select:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.superadmin-audits-table td select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.superadmin-audits-table td select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .superadmin-audits-assigning {
   margin-left: 0.5rem;
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
-

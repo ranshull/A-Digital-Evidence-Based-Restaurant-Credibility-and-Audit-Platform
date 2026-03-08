@@ -27,20 +27,12 @@ export default function Home() {
         <p className="home-role">Role: <strong>{user.role}</strong></p>
         <div className="home-cards">
           {user.role === 'USER' && (
-            <>
-              <Link to="/apply" className="card-link">
-                <div className="home-card">
-                  <h3>Apply as Owner</h3>
-                  <p>Submit your restaurant details and proof to request owner access.</p>
-                </div>
-              </Link>
-              <Link to="/application-status" className="card-link">
-                <div className="home-card">
-                  <h3>My Application</h3>
-                  <p>Check the status of your owner application.</p>
-                </div>
-              </Link>
-            </>
+            <Link to="/apply" className="card-link">
+              <div className="home-card">
+                <h3>Apply as Owner</h3>
+                <p>Submit your restaurant details and proof, then see your application status here.</p>
+              </div>
+            </Link>
           )}
           {user.role === 'OWNER' && (
             <Link to="/owner-dashboard" className="card-link">

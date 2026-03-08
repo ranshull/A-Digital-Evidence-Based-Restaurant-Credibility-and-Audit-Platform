@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { restaurants, owner } from '../api';
 import './OwnerRestaurantPhotos.css';
@@ -18,8 +18,10 @@ export default function OwnerRestaurantPhotos() {
   const [uploading, setUploading] = useState(false);
   const [caption, setCaption] = useState('Storefront');
   const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const fileInputRef = useRef(null);
 
   const load = () => {
     restaurants
@@ -33,6 +35,26 @@ export default function OwnerRestaurantPhotos() {
   };
 
   useEffect(() => load(), []);
+
+  useEffect(() => {
+    if (!file) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files?.[0] || null);
+  };
+
+  const clearFile = () => {
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -52,6 +74,7 @@ export default function OwnerRestaurantPhotos() {
       });
       setSuccess('Photo added.');
       setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
       load();
     } catch (err) {
       setError(err.response?.data?.detail || err.response?.data?.image_url?.[0] || 'Failed to add photo.');
@@ -84,15 +107,56 @@ export default function OwnerRestaurantPhotos() {
       {success && <div className="owner-photos-success">{success}</div>}
 
       <form onSubmit={handleAdd} className="owner-photos-form">
-        <label>Caption (section)</label>
-        <select value={caption} onChange={(e) => setCaption(e.target.value)}>
-          {CAPTIONS.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
-          ))}
-        </select>
-        <label>Image</label>
-        <input type="file" accept=".jpg,.jpeg,.png,.gif,.webp" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <button type="submit" disabled={uploading || !file}>{uploading ? 'Adding...' : 'Add photo'}</button>
+        <div className="owner-photos-field">
+          <label>Caption (section)</label>
+          <select
+            className="owner-photos-select"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            aria-label="Photo section"
+          >
+            {CAPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="owner-photos-field">
+          <label>Image</label>
+          <div className="owner-photos-file-wrap">
+            <label className="owner-photos-zone">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif,.webp"
+                onChange={handleFileChange}
+                disabled={uploading}
+                className="owner-photos-file-input"
+              />
+              <span className="owner-photos-zone-text">
+                {uploading ? '⋯ Adding…' : file ? '↻ Change photo' : '↑ Choose photo'}
+              </span>
+            </label>
+          </div>
+          {file && previewUrl && (
+            <div className="owner-photos-preview">
+              <div className="owner-photos-preview-name-row">
+                <span className="owner-photos-preview-name">{file.name}</span>
+                <button type="button" onClick={clearFile} className="owner-photos-preview-remove" aria-label="Remove">×</button>
+              </div>
+              <div className="owner-photos-preview-content">
+                <a href={previewUrl} target="_blank" rel="noreferrer" className="owner-photos-preview-link">
+                  <img src={previewUrl} alt={file.name} className="owner-photos-preview-img" />
+                </a>
+                <a href={previewUrl} target="_blank" rel="noreferrer" className="owner-photos-preview-view">View full size</a>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="owner-photos-actions">
+          <button type="submit" disabled={uploading || !file} className="owner-photos-submit">
+            {uploading ? 'Adding...' : 'Add photo'}
+          </button>
+        </div>
       </form>
 
       <section className="owner-photos-list">

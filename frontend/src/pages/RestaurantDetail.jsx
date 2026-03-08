@@ -17,6 +17,7 @@ L.Icon.Default.mergeOptions({
 export default function RestaurantDetail() {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
+  const [scoreData, setScoreData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -30,6 +31,14 @@ export default function RestaurantDetail() {
       .then(({ data }) => setRestaurant(data))
       .catch(() => setError('Restaurant not found or inactive.'))
       .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    restaurants
+      .getScore(id)
+      .then(({ data }) => setScoreData(data))
+      .catch(() => setScoreData(null));
   }, [id]);
 
   if (loading) return <div className="restaurant-detail-loading">Loading...</div>;
@@ -47,6 +56,50 @@ export default function RestaurantDetail() {
         <h1>{restaurant.name}</h1>
         {restaurant.city && <p className="restaurant-detail-city">{restaurant.city}</p>}
       </header>
+
+      {scoreData && (
+        <section className="restaurant-detail-section restaurant-detail-score">
+          <h2>Credibility score</h2>
+          <div className="restaurant-detail-score-card">
+            <div className="restaurant-detail-score-main">
+              <span className="restaurant-detail-score-value">
+                {scoreData.overall_score != null
+                  ? `${Math.round(Number(scoreData.overall_score))}/100`
+                  : '—'}
+              </span>
+              <span className={`restaurant-detail-score-badge ${(scoreData.badge || '').toLowerCase().replace('_', '-')}`}>
+                {scoreData.badge === 'AUDITOR_VERIFIED' && 'Auditor verified'}
+                {scoreData.badge === 'ADMIN_VERIFIED' && 'Admin verified'}
+                {scoreData.badge === 'PROVISIONAL' && 'Provisional'}
+                {!['AUDITOR_VERIFIED', 'ADMIN_VERIFIED', 'PROVISIONAL'].includes(scoreData.badge) && (scoreData.badge || '—')}
+              </span>
+            </div>
+            {scoreData.last_audit_at && (
+              <p className="restaurant-detail-score-meta">
+                Last reviewed: {new Date(scoreData.last_audit_at).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+          {scoreData.categories && scoreData.categories.length > 0 && (
+            <div className="restaurant-detail-score-breakdown">
+              <h3>Category breakdown</h3>
+              <ul>
+                {scoreData.categories
+                  .filter((c) => c.is_applicable && c.score != null)
+                  .map((c) => (
+                    <li key={c.name}>
+                      <span className="restaurant-detail-cat-name">{c.name}</span>
+                      <span className="restaurant-detail-cat-score">{Math.round(Number(c.score))}/100</span>
+                    </li>
+                  ))}
+              </ul>
+              {scoreData.categories.filter((c) => c.is_applicable && c.score != null).length === 0 && (
+                <p className="restaurant-detail-score-no-cats">No category scores yet.</p>
+              )}
+            </div>
+          )}
+        </section>
+      )}
 
       {photos.length > 0 && (
         <section className="restaurant-detail-hero">

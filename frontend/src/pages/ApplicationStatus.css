@@ -4,43 +4,43 @@
 
 .status-page h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
 .status-loading,
 .status-error {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   padding: 2rem;
 }
 
 .status-error {
-  color: #fca5a5;
+  color: var(--color-error);
 }
 
 .status-empty {
   text-align: center;
   padding: 3rem;
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--color-bg);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border);
 }
 
 .status-empty h2 {
   font-size: 1.25rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin-bottom: 0.5rem;
 }
 
 .status-empty p {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin-bottom: 1rem;
 }
 
 .status-cta {
   display: inline-block;
   padding: 0.6rem 1.25rem;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: var(--color-primary);
   color: #fff;
   border-radius: 8px;
   font-weight: 600;
@@ -55,30 +55,35 @@
 .status-cta.secondary {
   margin-top: 1rem;
   background: transparent;
-  border: 1px solid rgba(56, 189, 248, 0.5);
-  color: #38bdf8;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.status-cta.secondary:hover {
+  background: var(--color-bg-subtle);
 }
 
 .status-card {
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border);
   margin-bottom: 1.5rem;
+  background: var(--color-bg);
 }
 
 .status-card.status_pending {
-  background: rgba(251, 191, 36, 0.08);
-  border-color: rgba(251, 191, 36, 0.3);
+  background: color-mix(in srgb, #eab308 10%, var(--color-bg));
+  border-color: color-mix(in srgb, #eab308 40%, var(--color-border));
 }
 
 .status-card.status_approved {
-  background: rgba(34, 197, 94, 0.08);
-  border-color: rgba(34, 197, 94, 0.3);
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg));
+  border-color: color-mix(in srgb, var(--color-success) 40%, var(--color-border));
 }
 
 .status-card.status_rejected {
-  background: rgba(248, 113, 113, 0.08);
-  border-color: rgba(248, 113, 113, 0.3);
+  background: color-mix(in srgb, var(--color-error) 10%, var(--color-bg));
+  border-color: color-mix(in srgb, var(--color-error) 40%, var(--color-border));
 }
 
 .status-header {
@@ -92,7 +97,7 @@
 
 .status-header h2 {
   font-size: 1.15rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -104,23 +109,39 @@
   text-transform: uppercase;
 }
 
-.status_pending .status-badge { background: rgba(251, 191, 36, 0.3); color: #fbbf24; }
-.status_approved .status-badge { background: rgba(34, 197, 94, 0.3); color: #22c55e; }
-.status_rejected .status-badge { background: rgba(248, 113, 113, 0.3); color: #f87171; }
+.status_pending .status-badge {
+  background: color-mix(in srgb, #eab308 25%, transparent);
+  color: #b45309;
+}
+
+[data-theme="dark"] .status_pending .status-badge {
+  color: #facc15;
+}
+
+.status_approved .status-badge {
+  background: color-mix(in srgb, var(--color-success) 25%, transparent);
+  color: var(--color-success);
+}
+
+.status_rejected .status-badge {
+  background: color-mix(in srgb, var(--color-error) 25%, transparent);
+  color: var(--color-error);
+}
 
 .status-meta {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin: 0.25rem 0;
 }
 
 .status-notes {
   margin-top: 0.75rem;
-  padding: 0.5rem;
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 6px;
+  padding: 0.75rem;
+  background: var(--color-bg-subtle);
+  border-radius: 8px;
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
 }
 
 .status-pending-msg,
@@ -128,11 +149,19 @@
 .status-rejected-msg {
   margin-top: 0.75rem;
   font-size: 0.9rem;
-  color: #94a3b8;
 }
 
-.status-approved-msg { color: #86efac; }
-.status-rejected-msg { color: #fca5a5; }
+.status-pending-msg {
+  color: var(--color-text-muted);
+}
+
+.status-approved-msg {
+  color: var(--color-success);
+}
+
+.status-rejected-msg {
+  color: var(--color-error);
+}
 
 .status-history {
   margin-top: 1rem;
@@ -140,7 +169,7 @@
 
 .status-history h3 {
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
 }
 
@@ -149,9 +178,88 @@
   padding: 0;
   margin: 0;
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .status-history li {
   padding: 0.25rem 0;
+}
+
+.status-intro {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.status-summary {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.status-summary-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem;
+}
+
+.status-summary-list {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1.5rem;
+  align-items: baseline;
+}
+
+.status-summary-list dt {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.status-summary-list dd {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  margin: 0;
+  word-break: break-word;
+}
+
+.status-summary-link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.status-summary-link:hover {
+  text-decoration: underline;
+}
+
+.status-summary-photo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.status-summary-photo-link {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.status-summary-img {
+  display: block;
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.status-actions {
+  margin-top: 1rem;
 }

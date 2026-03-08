@@ -1,5 +1,7 @@
 .admin-detail-page {
   max-width: 640px;
+  padding: var(--content-padding, 1.5rem) 0;
+  color: var(--color-text);
 }
 
 .admin-detail-header {
@@ -13,55 +15,80 @@
 
 .admin-detail-header h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  font-weight: 700;
+  color: var(--color-text);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .admin-detail-badge {
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem 0.6rem;
-  border-radius: 6px;
+  border-radius: 8px;
   text-transform: uppercase;
 }
 
-.admin-detail-badge.pending { background: rgba(251, 191, 36, 0.3); color: #fbbf24; }
-.admin-detail-badge.approved { background: rgba(34, 197, 94, 0.3); color: #22c55e; }
-.admin-detail-badge.rejected { background: rgba(248, 113, 113, 0.3); color: #f87171; }
+.admin-detail-badge.pending {
+  background: color-mix(in srgb, #eab308 22%, transparent);
+  color: #b45309;
+}
+
+[data-theme="dark"] .admin-detail-badge.pending {
+  color: #facc15;
+}
+
+.admin-detail-badge.approved {
+  background: color-mix(in srgb, var(--color-success) 22%, transparent);
+  color: var(--color-success);
+}
+
+.admin-detail-badge.rejected {
+  background: color-mix(in srgb, var(--color-error) 22%, transparent);
+  color: var(--color-error);
+}
 
 .admin-detail-error {
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
-  background: rgba(248, 113, 113, 0.15);
-  border-radius: 8px;
-  color: #fca5a5;
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 38%, transparent);
+  border-radius: 10px;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .admin-detail-section {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .admin-detail-section h3 {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin: 0 0 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .admin-detail-section p {
   margin: 0.25rem 0;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
 .admin-detail-section a {
-  color: #38bdf8;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.admin-detail-section a:hover {
+  text-decoration: underline;
 }
 
 .admin-detail-links {
@@ -76,20 +103,20 @@
 
 .admin-detail-meta {
   font-size: 0.85rem;
-  color: #64748b !important;
+  color: var(--color-text-muted) !important;
 }
 
 .admin-detail-actions {
   margin-top: 1.5rem;
   padding: 1.25rem;
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--color-bg);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border);
 }
 
 .admin-detail-actions h3 {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin: 0 0 0.5rem;
 }
 
@@ -97,13 +124,20 @@
   width: 100%;
   margin-bottom: 1rem;
   padding: 0.6rem 0.75rem;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: 6px;
-  color: #f8fafc;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
   font-size: 0.95rem;
+  font-family: inherit;
   box-sizing: border-box;
   resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.admin-detail-actions textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .admin-detail-buttons {
@@ -113,7 +147,7 @@
 
 .admin-detail-buttons button {
   padding: 0.6rem 1.25rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -126,14 +160,18 @@
 }
 
 .btn-approve {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: var(--color-success);
   color: #fff;
 }
 
 .btn-reject {
   background: transparent;
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: var(--color-error);
+  border: 1px solid color-mix(in srgb, var(--color-error) 50%, var(--color-border));
+}
+
+.btn-reject:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
 }
 
 .admin-detail-back {
@@ -143,11 +181,16 @@
 .admin-detail-back button {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .admin-detail-back button:hover {
-  color: #f8fafc;
+  color: var(--color-primary);
+}
+
+.admin-loading {
+  color: var(--color-text-muted);
+  padding: 1.5rem 0;
 }

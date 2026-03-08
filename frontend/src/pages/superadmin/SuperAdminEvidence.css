@@ -1,0 +1,198 @@
+.superadmin-evidence-page {
+  padding: var(--content-padding, 1.5rem) 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--color-text);
+}
+
+.superadmin-evidence-header {
+  margin-bottom: 1.25rem;
+}
+
+.superadmin-evidence-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.superadmin-evidence-sub {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.superadmin-evidence-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.superadmin-evidence-summary-item {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.superadmin-evidence-summary-item strong {
+  margin-right: 0.25rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.superadmin-evidence-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.superadmin-evidence-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.superadmin-evidence-filters select {
+  padding: 0.5rem 0.75rem;
+  min-width: 140px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.superadmin-evidence-filters select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+.superadmin-evidence-error {
+  color: var(--color-error);
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.superadmin-evidence-loading,
+.superadmin-evidence-empty {
+  color: var(--color-text-muted);
+  margin: 1rem 0;
+}
+
+.superadmin-evidence-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.superadmin-evidence-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.superadmin-evidence-table th,
+.superadmin-evidence-table td {
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.superadmin-evidence-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+}
+
+.superadmin-evidence-table td {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.superadmin-evidence-table tbody tr:hover {
+  background: var(--color-bg-subtle);
+}
+
+.superadmin-evidence-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.superadmin-evidence-video-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.superadmin-evidence-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+}
+
+.superadmin-evidence-status-pending {
+  background: color-mix(in srgb, #eab308 20%, transparent);
+  color: #b45309;
+}
+
+.superadmin-evidence-status-approved {
+  background: color-mix(in srgb, var(--color-success) 22%, transparent);
+  color: var(--color-success);
+}
+
+.superadmin-evidence-status-rejected {
+  background: color-mix(in srgb, var(--color-error) 18%, transparent);
+  color: var(--color-error);
+}
+
+.superadmin-evidence-status-flagged {
+  background: color-mix(in srgb, #a78bfa 22%, transparent);
+  color: #7c3aed;
+}
+
+.superadmin-evidence-crypto-ok {
+  color: var(--color-success);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.superadmin-evidence-crypto-na {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.superadmin-evidence-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.superadmin-evidence-link:hover {
+  text-decoration: underline;
+}

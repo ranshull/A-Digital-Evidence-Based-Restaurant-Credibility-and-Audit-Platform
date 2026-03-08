@@ -1,31 +1,39 @@
 .auditor-my-audits-page {
   max-width: 800px;
+  padding: var(--content-padding, 1.5rem) 0;
+  color: var(--color-text);
 }
 
 .auditor-my-audits-page h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
 }
 
 .auditor-subtext {
-  color: #94a3b8;
-  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
   margin-bottom: 1.5rem;
+  line-height: 1.45;
 }
 
 .auditor-loading,
 .auditor-empty {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   padding: 2rem 0;
+  font-size: 0.9375rem;
 }
 
 .auditor-error {
-  color: #f87171;
+  color: var(--color-error);
   padding: 0.75rem 1rem;
-  background: rgba(248, 113, 113, 0.1);
-  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 35%, transparent);
+  border-radius: 10px;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
 
 .auditor-audit-list {
@@ -42,29 +50,38 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem 1.1rem;
-  border-radius: 10px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   text-decoration: none;
-  color: #e2e8f0;
+  color: var(--color-text);
+  transition: border-color 0.2s, background 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .auditor-audit-item a:hover {
-  border-color: rgba(56, 189, 248, 0.4);
+  border-color: var(--color-primary);
+  background: var(--color-bg-subtle);
 }
 
 .auditor-status {
   display: inline-block;
-  margin-left: 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #94a3b8;
+  letter-spacing: 0.05em;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary);
 }
 
 .auditor-meta {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--color-text-muted);
+  width: 100%;
+  margin-top: 0.25rem;
 }
-

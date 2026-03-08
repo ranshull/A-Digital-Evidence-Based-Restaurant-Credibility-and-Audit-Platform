@@ -1,5 +1,7 @@
 .admin-restaurant-review {
   max-width: 900px;
+  padding: var(--content-padding, 1.5rem) 0;
+  color: var(--color-text);
 }
 
 .admin-review-back {
@@ -7,21 +9,32 @@
 }
 
 .admin-review-back a {
-  color: #94a3b8;
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.admin-review-back a:hover {
+  text-decoration: underline;
 }
 
 .admin-restaurant-review h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  font-weight: 700;
+  color: var(--color-text);
   margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
 .admin-review-error {
-  color: #fca5a5;
+  color: var(--color-error);
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
 }
 
 .admin-review-evidence-list {
@@ -30,12 +43,13 @@
 
 .admin-review-evidence-list h2 {
   font-size: 1.1rem;
-  color: #e2e8f0;
+  font-weight: 600;
+  color: var(--color-text);
   margin-bottom: 0.35rem;
 }
 
 .admin-review-hint {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
@@ -51,46 +65,51 @@
   flex-direction: column;
   align-items: center;
   padding: 0.5rem;
-  background: rgba(30, 41, 59, 0.6);
-  border: 2px solid rgba(148, 163, 184, 0.2);
-  border-radius: 8px;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   color: inherit;
   text-align: center;
+  text-decoration: none;
 }
 
 .admin-review-evidence-card:hover {
-  border-color: rgba(56, 189, 248, 0.4);
+  border-color: var(--color-primary);
+  background: var(--color-bg-subtle);
 }
 
 .admin-review-evidence-card.selected {
-  border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-subtle));
 }
 
 .admin-review-evidence-card img {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
 }
 
 .admin-review-evidence-video {
   width: 100%;
   aspect-ratio: 1;
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 6px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
 .admin-review-evidence-meta {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin-top: 0.35rem;
 }
 
@@ -98,39 +117,68 @@
   font-size: 0.7rem;
   margin-top: 0.25rem;
   padding: 0.15rem 0.4rem;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
-.admin-review-evidence-status.pending { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
-.admin-review-evidence-status.approved { background: rgba(34, 197, 94, 0.25); color: #22c55e; }
-.admin-review-evidence-status.rejected { background: rgba(248, 113, 113, 0.25); color: #f87171; }
-.admin-review-evidence-status.flagged { background: rgba(167, 139, 250, 0.25); color: #a78bfa; }
+.admin-review-evidence-status.pending {
+  background: color-mix(in srgb, #eab308 22%, transparent);
+  color: #b45309;
+}
+
+[data-theme="dark"] .admin-review-evidence-status.pending {
+  color: #facc15;
+}
+
+.admin-review-evidence-status.approved {
+  background: color-mix(in srgb, var(--color-success) 22%, transparent);
+  color: var(--color-success);
+}
+
+.admin-review-evidence-status.rejected {
+  background: color-mix(in srgb, var(--color-error) 22%, transparent);
+  color: var(--color-error);
+}
+
+.admin-review-evidence-status.flagged {
+  background: color-mix(in srgb, #a78bfa 22%, transparent);
+  color: #7c3aed;
+}
+
+[data-theme="dark"] .admin-review-evidence-status.flagged {
+  color: #a78bfa;
+}
 
 .admin-review-detail {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .admin-review-detail h2 {
   font-size: 1rem;
-  color: #e2e8f0;
+  font-weight: 600;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
 .admin-review-detail h3 {
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin: 1rem 0 0.75rem;
+  font-weight: 600;
 }
 
 .admin-review-big-media {
   margin-bottom: 0.75rem;
   border-radius: 8px;
   overflow: hidden;
-  background: #0f172a;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
 }
 
 .admin-review-big-media img,
@@ -143,12 +191,12 @@
 
 .admin-review-file-meta {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
 }
 
 .admin-review-description {
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.95rem;
   margin-bottom: 1rem;
 }
@@ -157,13 +205,20 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
-  border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(15, 23, 42, 0.8);
-  color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
   font-size: 0.9rem;
+  font-family: inherit;
   box-sizing: border-box;
   resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.admin-review-actions textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .admin-review-buttons {
@@ -173,46 +228,56 @@
 
 .admin-review-buttons button {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   border: none;
+  transition: opacity 0.2s, background 0.2s;
 }
 
 .admin-review-buttons .btn-approve {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: var(--color-success);
   color: #fff;
 }
 
 .admin-review-buttons .btn-reject {
   background: transparent;
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: var(--color-error);
+  border: 1px solid color-mix(in srgb, var(--color-error) 50%, var(--color-border));
+}
+
+.admin-review-buttons .btn-reject:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
 }
 
 .admin-review-buttons .btn-flag {
-  background: rgba(167, 139, 250, 0.2);
+  background: color-mix(in srgb, #a78bfa 20%, transparent);
+  color: #7c3aed;
+  border: 1px solid color-mix(in srgb, #a78bfa 40%, var(--color-border));
+}
+
+[data-theme="dark"] .admin-review-buttons .btn-flag {
   color: #a78bfa;
-  border: 1px solid rgba(167, 139, 250, 0.4);
 }
 
 .admin-review-scoring {
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  border-top: 1px solid var(--color-border);
 }
 
 .admin-review-summary-only,
 .admin-review-summary-block {
   padding: 1rem;
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 8px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
   margin-bottom: 1rem;
 }
 
 .admin-review-summary-title {
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--color-text);
   margin-bottom: 0.5rem;
 }
 
@@ -221,7 +286,7 @@
 .admin-review-summary-only ul,
 .admin-review-summary-block ul {
   margin: 0.35rem 0;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.9rem;
 }
 
@@ -233,22 +298,32 @@
 
 .admin-review-btn-edit {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: rgba(56, 189, 248, 0.2);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   cursor: pointer;
   font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.admin-review-btn-edit:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .admin-review-btn-final {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 10px;
+  background: var(--color-success);
   color: #fff;
   border: none;
   cursor: pointer;
   font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.admin-review-btn-final:hover:not(:disabled) {
+  opacity: 0.95;
 }
 
 .admin-review-form {
@@ -259,7 +334,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.9rem;
   margin-bottom: 1rem;
   cursor: pointer;
@@ -274,46 +349,58 @@
 }
 
 .admin-review-sub label {
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.9rem;
 }
 
 .admin-review-sub select {
   padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(15, 23, 42, 0.8);
-  color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
   width: 60px;
+  font-family: inherit;
 }
 
 .admin-review-sub input {
   padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(15, 23, 42, 0.8);
-  color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
   min-width: 140px;
+  font-family: inherit;
 }
 
 .admin-review-cat-score {
-  color: #22c55e;
+  color: var(--color-success);
   font-weight: 600;
   margin: 0.75rem 0;
 }
 
 .admin-review-btn-submit {
   padding: 0.6rem 1.25rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: var(--color-primary);
   color: #fff;
   margin-top: 0.5rem;
+  transition: opacity 0.2s;
+}
+
+.admin-review-btn-submit:hover:not(:disabled) {
+  opacity: 0.95;
 }
 
 .admin-review-btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.admin-loading {
+  color: var(--color-text-muted);
+  padding: 1.5rem 0;
 }

@@ -42,6 +42,7 @@ export const auth = {
   login: (email, password) => api.post('/auth/login/', { email, password }),
   register: (body) => api.post('/auth/register/', body),
   me: () => api.get('/auth/me/'),
+  updateProfile: (data) => api.patch('/auth/me/', data),
 };
 
 export const owner = {
@@ -123,6 +124,16 @@ export const superadmin = {
   staffWorkload: (params = {}) => api.get('/superadmin/staff-workload/', { params }),
   unassignedWork: () => api.get('/superadmin/unassigned-work/'),
   assignWork: (restaurantId, userId) => api.post('/superadmin/assign-work/', { restaurant_id: restaurantId, user_id: userId }),
+  listEvidence: (params = {}) => api.get('/evidence/pending/', { params }),
+  getEvidence: (id) => api.get(`/evidence/${id}/detail/`),
+  evidenceSummary: () => api.get('/superadmin/evidence-summary/'),
+};
+
+export const crypto = {
+  verifyChain: (restaurantId) => api.post(`/crypto/verify-chain/${restaurantId}/`),
+  integrityCheck: (evidenceId) => api.get(`/crypto/integrity-check/${evidenceId}/`),
+  merkleProof: (evidenceId) => api.get(`/crypto/merkle-proof/${evidenceId}/`),
+  verifyTimestamp: (evidenceId) => api.post(`/crypto/verify-timestamp/${evidenceId}/`),
 };
 
 export const adminAudits = {

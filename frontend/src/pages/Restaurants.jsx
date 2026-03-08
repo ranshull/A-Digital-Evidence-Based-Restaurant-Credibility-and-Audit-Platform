@@ -120,6 +120,12 @@ export default function Restaurants() {
                 <li key={r.id} className="restaurant-card">
                   <div className="restaurant-card-carousel-wrap">
                     <Carousel images={r.photos || []} alt={r.name} intervalMs={4000} className="restaurant-card-carousel" />
+                    {r.credibility_score != null && (
+                      <div className="restaurant-card-score">
+                        <span className="restaurant-card-score-value">{Number(r.credibility_score).toFixed(0)}</span>
+                        <span className="restaurant-card-score-label">/ 100</span>
+                      </div>
+                    )}
                   </div>
                   <Link to={`/restaurants/${r.id}`} className="restaurant-card-link">
                     <div className="restaurant-card-body">
@@ -163,6 +169,12 @@ export default function Restaurants() {
                     <strong><a href={`/restaurants/${r.id}`}>{r.name}</a></strong>
                     <br />
                     {r.address}, {r.city}
+                    {r.credibility_score != null && (
+                      <>
+                        <br />
+                        <span className="restaurant-popup-score">Score: {Number(r.credibility_score).toFixed(0)}/100</span>
+                      </>
+                    )}
                     <br />
                     <a href={`/restaurants/${r.id}`}>View details</a>
                     {r.google_maps_link && (

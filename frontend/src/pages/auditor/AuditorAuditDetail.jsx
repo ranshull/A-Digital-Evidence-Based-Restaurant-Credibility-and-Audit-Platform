@@ -78,23 +78,15 @@ export default function AuditorAuditDetail() {
     setError('');
     setUploading(true);
     try {
-      const uploadedEvidence = [];
+      const formData = new FormData();
+      formData.append('category_id', Number(selectedCategoryId));
+      formData.append('description', uploadDescription);
       for (let i = 0; i < files.length; i += 1) {
-        const file = files[i];
-        const { data } = await owner.upload(file);
-        const payload = {
-          category_id: Number(selectedCategoryId),
-          description: uploadDescription,
-          file_url: data.url || data.file_url || data.location,
-          original_filename: file.name,
-          mime_type: file.type,
-          file_size_bytes: file.size,
-          file_type: (file.type || '').startsWith('video') ? 'VIDEO' : 'IMAGE',
-        };
-        const evRes = await auditor.uploadEvidence(auditId, payload);
-        uploadedEvidence.push(evRes.data);
+        formData.append('files', files[i]);
       }
-      setEvidence((prev) => [...uploadedEvidence, ...prev]);
+      const evRes = await auditor.uploadEvidence(auditId, formData);
+      const created = Array.isArray(evRes.data) ? evRes.data : [evRes.data];
+      setEvidence((prev) => [...created, ...prev]);
       setUploadDescription('');
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to upload evidence');
@@ -135,10 +127,6 @@ export default function AuditorAuditDetail() {
       .finally(() => setSavingScores(false));
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <div className="auditor-audit-detail-page">
       <h1>Audit for {audit.restaurant_name}</h1>
@@ -159,9 +147,6 @@ export default function AuditorAuditDetail() {
             {submitting ? 'Submitting…' : 'Submit audit to Admin'}
           </button>
         )}
-        <button type="button" className="auditor-btn auditor-btn-secondary" onClick={handlePrint}>
-          Print scoring form
-        </button>
       </div>
 
       <section className="auditor-section">
@@ -170,41 +155,61 @@ export default function AuditorAuditDetail() {
           For each area (e.g. kitchen, dining), capture clear photos and later use the scoring view to record scores.
         </p>
         {canEdit && (
-          <div className="auditor-upload-bar">
-            <label>
-              Category
-              <select
-                value={selectedCategoryId}
-                onChange={(e) => setSelectedCategoryId(e.target.value)}
+          <div className="auditor-upload-card">
+            <h3 className="auditor-upload-title">Upload evidence</h3>
+            <div className="auditor-upload-fields">
+              <div className="auditor-upload-field">
+                <label>Category</label>
+                <select
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  disabled={uploading}
+                  className="auditor-upload-select"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}{c.weight != null ? ` (${(c.weight * 100).toFixed(0)}%)` : ''}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="auditor-upload-field">
+                <label>Description (optional)</label>
+                <input
+                  type="text"
+                  className="auditor-upload-notes"
+                  placeholder="Short description for this evidence"
+                  value={uploadDescription}
+                  onChange={(e) => setUploadDescription(e.target.value)}
+                  disabled={uploading}
+                />
+              </div>
+            </div>
+            <div className="auditor-upload-field">
+              <label>Photos / videos</label>
+              <div
+                className="auditor-dropzone"
+                onClick={() => !uploading && selectedCategoryId && document.getElementById('auditor-evidence-files').click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && !uploading && selectedCategoryId && document.getElementById('auditor-evidence-files').click()}
+                aria-disabled={uploading || !selectedCategoryId}
               >
-                <option value="">Select category</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </label>
-            <label className="auditor-upload-files">
-              Upload photos/videos
+                {uploading ? 'Uploading…' : !selectedCategoryId ? 'Select a category first' : 'Drag & drop or click to browse'}
+              </div>
               <input
+                id="auditor-evidence-files"
                 type="file"
                 multiple
-                accept="image/*,video/*"
+                accept=".jpg,.jpeg,.png,.mp4,image/*,video/mp4"
                 onChange={(e) => {
                   const files = Array.from(e.target.files || []);
                   handleFilesSelected(files);
                   e.target.value = '';
                 }}
                 disabled={uploading || !selectedCategoryId}
+                style={{ display: 'none' }}
               />
-            </label>
-            <input
-              type="text"
-              className="auditor-upload-notes"
-              placeholder="Short description (optional)"
-              value={uploadDescription}
-              onChange={(e) => setUploadDescription(e.target.value)}
-              disabled={uploading}
-            />
+            </div>
           </div>
         )}
         <div className="auditor-category-grid">

@@ -1,22 +1,22 @@
 .owner-dashboard h1 {
   font-size: 1.5rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
 .owner-loading,
 .owner-error {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   padding: 2rem;
 }
 
 .owner-error {
-  color: #fca5a5;
+  color: var(--color-error);
 }
 
 .owner-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -24,30 +24,30 @@
 
 .owner-card h2 {
   font-size: 1.25rem;
-  color: #f8fafc;
+  color: var(--color-text);
   margin: 0 0 0.75rem;
 }
 
 .owner-card p {
   margin: 0.35rem 0;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
 .owner-card a {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .owner-status {
   font-weight: 600;
 }
 
-.owner-status.active { color: #22c55e; }
-.owner-status.suspended { color: #f87171; }
+.owner-status.active { color: var(--color-success); }
+.owner-status.suspended { color: var(--color-error); }
 
 .owner-meta {
   font-size: 0.85rem;
-  color: #64748b !important;
+  color: var(--color-text-muted) !important;
   margin-top: 0.75rem !important;
 }
 
@@ -69,20 +69,24 @@
 }
 
 .owner-btn-edit {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  color: #fff;
+  background: var(--color-primary);
+  color: #fff !important;
+}
+a.owner-btn-edit,
+a.owner-btn-edit:hover {
+  color: #fff !important;
 }
 
 .owner-btn-photos {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .owner-btn-view {
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  color: #94a3b8;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
 
 .owner-btn:hover {
@@ -90,7 +94,7 @@
 }
 
 .owner-intro {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
 }
 
@@ -106,19 +110,19 @@
 }
 
 .owner-banner-danger {
-  background: rgba(248, 113, 113, 0.15);
-  border: 1px solid rgba(248, 113, 113, 0.6);
-  color: #fecaca;
+  background: color-mix(in srgb, var(--color-error) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 50%, transparent);
+  color: var(--color-error);
 }
 
 .owner-banner-warning {
-  background: rgba(234, 179, 8, 0.12);
-  border: 1px solid rgba(234, 179, 8, 0.6);
-  color: #facc15;
+  background: color-mix(in srgb, #eab308 12%, transparent);
+  border: 1px solid color-mix(in srgb, #eab308 50%, transparent);
+  color: #eab308;
 }
 
 .owner-banner-link {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
 }
@@ -137,32 +141,35 @@
 .owner-score-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #22c55e;
+  color: var(--color-success);
 }
 
 .owner-score-badge {
   font-size: 0.85rem;
   padding: 0.25rem 0.6rem;
   border-radius: 6px;
-  background: rgba(148, 163, 184, 0.2);
-  color: #94a3b8;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
 }
 
 .owner-score-badge.verified {
-  background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
+  background: color-mix(in srgb, var(--color-success) 20%, transparent);
+  color: var(--color-success);
+  border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
 }
 
 .owner-score-badge.auditor-verified {
-  background: rgba(59, 130, 246, 0.25);
-  color: #60a5fa;
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 .owner-score-breakdown,
 .owner-score-suggestions {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #e2e8f0;
+  color: var(--color-text);
 }
 
 .owner-score-breakdown ul,
@@ -176,10 +183,16 @@
 }
 
 .owner-btn-audit {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  color: #fff;
+  background: var(--color-primary);
+  color: #fff !important;
+}
+a.owner-btn-audit,
+button.owner-btn-audit,
+a.owner-btn-audit:hover {
+  color: #fff !important;
 }
 
 .owner-audit-message {
   margin-top: 0.5rem;
+  color: var(--color-text-muted);
 }

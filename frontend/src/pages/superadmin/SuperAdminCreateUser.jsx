@@ -53,30 +53,42 @@ export default function SuperAdminCreateUser() {
 
   return (
     <div className="superadmin-create-page">
-      <p className="superadmin-create-back">
-        <Link to="/superadmin/users">← Back to users</Link>
-      </p>
-      <h1>Create user</h1>
-      <p className="superadmin-create-sub">Create new Admin, Auditor, or other roles.</p>
-      {success && <div className="superadmin-create-success">User created. Redirecting...</div>}
-      {error && <div className="superadmin-create-error">{error}</div>}
+      <Link to="/superadmin/users" className="superadmin-create-back">← Back to users</Link>
+      <header className="superadmin-create-header">
+        <h1>Create user</h1>
+        <p className="superadmin-create-sub">Create new Admin, Auditor, or other roles.</p>
+      </header>
+      {success && <div className="superadmin-create-success" role="alert">User created. Redirecting...</div>}
+      {error && <div className="superadmin-create-error" role="alert">{error}</div>}
       <form onSubmit={handleSubmit} className="superadmin-create-form">
-        <label>Name *</label>
-        <input name="name" value={form.name} onChange={handleChange} required />
-        <label>Email *</label>
-        <input name="email" type="email" value={form.email} onChange={handleChange} required />
-        <label>Phone</label>
-        <input name="phone" value={form.phone} onChange={handleChange} />
-        <label>Password *</label>
-        <input name="password" type="password" value={form.password} onChange={handleChange} required minLength={8} placeholder="Min 8 characters" />
-        <label>Role *</label>
-        <select name="role" value={form.role} onChange={handleChange}>
-          {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>{r.label}</option>
-          ))}
-        </select>
+        <div className="superadmin-create-field">
+          <label htmlFor="create-name">Name *</label>
+          <input id="create-name" name="name" value={form.name} onChange={handleChange} required placeholder="Full name" />
+        </div>
+        <div className="superadmin-create-field">
+          <label htmlFor="create-email">Email *</label>
+          <input id="create-email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="user@example.com" />
+        </div>
+        <div className="superadmin-create-field">
+          <label htmlFor="create-phone">Phone</label>
+          <input id="create-phone" name="phone" value={form.phone} onChange={handleChange} placeholder="Optional" />
+        </div>
+        <div className="superadmin-create-field">
+          <label htmlFor="create-password">Password *</label>
+          <input id="create-password" name="password" type="password" value={form.password} onChange={handleChange} required minLength={8} placeholder="Min 8 characters" />
+        </div>
+        <div className="superadmin-create-field">
+          <label htmlFor="create-role">Role *</label>
+          <select id="create-role" name="role" value={form.role} onChange={handleChange}>
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
+          </select>
+        </div>
         <div className="superadmin-create-actions">
-          <button type="submit" disabled={submitting}>{submitting ? 'Creating...' : 'Create user'}</button>
+          <button type="submit" disabled={submitting} className="superadmin-create-submit">
+            {submitting ? 'Creating...' : 'Create user'}
+          </button>
           <Link to="/superadmin/users" className="superadmin-create-cancel">Cancel</Link>
         </div>
       </form>

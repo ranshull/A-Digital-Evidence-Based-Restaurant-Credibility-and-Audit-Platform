@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Restaurants from './pages/Restaurants';
@@ -8,7 +9,6 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Apply from './pages/Apply';
-import ApplicationStatus from './pages/ApplicationStatus';
 import OwnerDashboard from './pages/OwnerDashboard';
 import OwnerRestaurantEdit from './pages/OwnerRestaurantEdit';
 import OwnerRestaurantPhotos from './pages/OwnerRestaurantPhotos';
@@ -29,18 +29,30 @@ import SuperAdminLogs from './pages/superadmin/SuperAdminLogs';
 import SuperAdminReport from './pages/superadmin/SuperAdminReport';
 import SuperAdminAssignments from './pages/superadmin/SuperAdminAssignments';
 import SuperAdminAudits from './pages/superadmin/SuperAdminAudits';
+import SuperAdminEvidence from './pages/superadmin/SuperAdminEvidence';
+import SuperAdminEvidenceDetail from './pages/superadmin/SuperAdminEvidenceDetail';
 import AuditorMyAudits from './pages/auditor/AuditorMyAudits';
 import AuditorAuditDetail from './pages/auditor/AuditorAuditDetail';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
           <Route path="/" element={<Layout><Restaurants /></Layout>} />
           <Route path="/restaurants/:id" element={<Layout><RestaurantDetail /></Layout>} />
           <Route path="/dashboard" element={<Layout><Home /></Layout>} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Layout><Profile /></Layout>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Layout><Login /></Layout>} />
           <Route path="/register" element={<Layout><Register /></Layout>} />
           <Route
@@ -51,14 +63,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/application-status"
-            element={
-              <ProtectedRoute allowedRoles={['USER']}>
-                <Layout><ApplicationStatus /></Layout>
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/application-status" element={<Navigate to="/apply" replace />} />
           <Route
             path="/owner-dashboard"
             element={
@@ -235,10 +240,27 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/superadmin/evidence"
+            element={
+              <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+                <Layout><SuperAdminEvidence /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/evidence/:id"
+            element={
+              <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+                <Layout><SuperAdminEvidenceDetail /></Layout>
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
