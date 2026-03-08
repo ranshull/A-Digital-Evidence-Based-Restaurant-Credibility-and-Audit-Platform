@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/rubric/', include('core.urls.rubric')),
     path('api/score/', include('core.urls.scoring')),
     path('api/superadmin/', include('core.urls.superadmin')),
+    path('api/crypto/', include('core.urls.crypto')),
 ]
 
 if settings.DEBUG:

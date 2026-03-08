@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 import mimetypes
 
@@ -51,9 +52,12 @@ class FileUploadView(APIView):
         if ext in {'jpg', 'jpeg'}:
             folder = 'jpg'
 
-        # Build safe unique filename
+        # Build safe unique filename (Supabase keys allow only safe ASCII)
         original_name = os.path.basename(file.name)
-        safe_name = original_name.replace(' ', '_')
+        safe_base = re.sub(r'[^a-zA-Z0-9._-]', '_', original_name)
+        safe_base = safe_base.strip('._') or 'file'
+        safe_base = safe_base.rsplit('.', 1)[0] if '.' in safe_base else safe_base
+        safe_name = f'{safe_base}.{ext}'
         unique_name = f'{uuid.uuid4().hex}_{safe_name}'
         object_path = f'{folder}/{unique_name}'
 
@@ -66,18 +70,35 @@ class FileUploadView(APIView):
             'Content-Type': content_type,
         }
 
-        # Stream file to Supabase Storage
+        # Stream file to Supabase Storage (timeout 60s)
         try:
-            resp = requests.post(upload_url, headers=headers, data=file.read())
+            file_data = file.read()
+            resp = requests.post(upload_url, headers=headers, data=file_data, timeout=60)
+        except requests.exceptions.Timeout:
+            return Response(
+                {'detail': 'Upload timed out. Supabase storage did not respond in time.'},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+        except requests.exceptions.ConnectionError as exc:
+            return Response(
+                {'detail': 'Cannot reach Supabase storage. Check SUPABASE_URL and network.'},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
         except Exception as exc:
             return Response(
-                {'detail': f'Error uploading to storage: {exc}'},
+                {'detail': f'Error uploading to storage: {type(exc).__name__}'},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
         if resp.status_code not in (200, 201):
+            try:
+                err_body = resp.json()
+                msg = err_body.get('message') or err_body.get('error_description') or resp.text[:200]
+            except Exception:
+                msg = resp.text[:200] if resp.text else f'HTTP {resp.status_code}'
+            detail = f'Upload to storage failed: {msg}' if msg else 'Upload to storage failed. Check server SUPABASE_URL and SUPABASE_SERVICE_KEY.'
             return Response(
-                {'detail': 'Upload to storage failed.', 'status_code': resp.status_code},
+                {'detail': detail, 'status_code': resp.status_code},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 

@@ -13,6 +13,7 @@ from ..models import (
     Evidence,
     Score,
     EvidenceStatus,
+    HashChain,
 )
 from ..serializers import (
     SuperAdminUserListSerializer,
@@ -102,6 +103,23 @@ class SuperAdminLogsView(APIView):
                 },
             })
         return Response(result)
+
+
+class SuperAdminEvidenceSummaryView(APIView):
+    """Super Admin: trust summary counts for Evidence / crypto (total, verified, chains invalid)."""
+    permission_classes = [IsSuperAdmin]
+
+    def get(self, request):
+        total_evidence = Evidence.objects.count()
+        cryptographically_verified_count = Evidence.objects.filter(
+            is_cryptographically_verified=True
+        ).count()
+        hash_chains_invalid = HashChain.objects.filter(is_valid=False).count()
+        return Response({
+            'total_evidence': total_evidence,
+            'cryptographically_verified_count': cryptographically_verified_count,
+            'hash_chains_invalid_count': hash_chains_invalid,
+        })
 
 
 class SuperAdminRollbackView(APIView):

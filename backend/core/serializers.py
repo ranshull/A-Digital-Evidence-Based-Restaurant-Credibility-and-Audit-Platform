@@ -21,10 +21,80 @@ ASSIGNABLE_ROLES = [Role.USER, Role.OWNER, Role.AUDITOR, Role.ADMIN]
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture_url = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'phone', 'role', 'is_active', 'created_at')
-        read_only_fields = ('id', 'role', 'is_active', 'created_at')
+        fields = ('id', 'name', 'email', 'phone', 'role', 'profile_picture_url', 'is_active', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'role', 'profile_picture_url', 'is_active', 'created_at', 'updated_at')
+
+    def get_profile_picture_url(self, obj):
+        try:
+            if obj.profile_picture_url:
+                return obj.profile_picture_url
+            if obj.profile_picture:
+                request = self.context.get('request')
+                if request:
+                    return request.build_absolute_uri(obj.profile_picture.url)
+                return obj.profile_picture.url
+        except (ValueError, OSError, AttributeError):
+            pass
+        return None
+
+
+# Used by MeView for PATCH: role-based allowed fields (owner/user = all; admin/auditor/super_admin = phone + profile_picture only)
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(required=False, allow_null=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('name', 'email', 'phone', 'profile_picture')
+
+    def update(self, instance, validated_data):
+        from django.conf import settings
+        from core.utils.storage import upload_to_supabase
+
+        request = self.context.get('request')
+        if request and request.user and request.user.role in (Role.ADMIN, Role.AUDITOR, Role.SUPER_ADMIN):
+            allowed_keys = ('phone', 'profile_picture')
+        else:
+            allowed_keys = ('name', 'email', 'phone', 'profile_picture')
+
+        profile_file = validated_data.pop('profile_picture', None)
+        if profile_file is not None:
+            supabase_url = getattr(settings, 'SUPABASE_URL', None)
+            supabase_key = getattr(settings, 'SUPABASE_SERVICE_KEY', None)
+            if supabase_url and supabase_key:
+                try:
+                    public_url, _ = upload_to_supabase(profile_file, 'profiles')
+                    instance.profile_picture_url = public_url
+                    instance.profile_picture = None
+                except Exception:
+                    try:
+                        profile_file.seek(0)
+                        instance.profile_picture = profile_file
+                        instance.profile_picture_url = None
+                    except Exception:
+                        instance.profile_picture_url = None
+            else:
+                try:
+                    instance.profile_picture = profile_file
+                    instance.profile_picture_url = None
+                except Exception:
+                    instance.profile_picture_url = None
+
+        for attr, value in validated_data.items():
+            if attr in allowed_keys:
+                setattr(instance, attr, value)
+        try:
+            instance.save()
+        except Exception as e:
+            if profile_file is not None:
+                raise serializers.ValidationError({
+                    'profile_picture': ['Failed to save image. Try a smaller or different format (e.g. JPEG, PNG).']
+                }) from e
+            raise
+        return instance
 
 
 class SuperAdminUserListSerializer(serializers.ModelSerializer):
@@ -192,14 +262,15 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class RestaurantPublicSerializer(serializers.ModelSerializer):
-    """Public list/detail for browse; no owner."""
+    """Public list/detail for browse; no owner; includes score for carousel/cards."""
     photos = RestaurantPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Restaurant
         fields = (
             'id', 'name', 'address', 'city', 'google_maps_link',
-            'latitude', 'longitude', 'operating_hours', 'phone', 'photos'
+            'latitude', 'longitude', 'operating_hours', 'phone', 'photos',
+            'credibility_score', 'last_audit_at',
         )
 
 
@@ -231,6 +302,8 @@ class EvidenceSerializer(serializers.ModelSerializer):
             'file_url', 'file_type', 'original_filename', 'file_size_bytes', 'mime_type',
             'description', 'status', 'reviewed_by', 'review_notes',
             'upload_timestamp', 'reviewed_timestamp',
+            'is_cryptographically_verified',
+            'hash_value', 'previous_hash', 'chain_index', 'file_content_hash', 'is_chain_valid',
         )
         read_only_fields = (
             'id', 'restaurant', 'uploaded_by', 'file_url', 'file_type',
@@ -336,6 +409,7 @@ class AuditEvidenceSerializer(serializers.ModelSerializer):
             'mime_type',
             'description',
             'upload_timestamp',
+            'is_cryptographically_verified',
         )
         read_only_fields = (
             'id',
@@ -347,6 +421,7 @@ class AuditEvidenceSerializer(serializers.ModelSerializer):
             'file_size_bytes',
             'mime_type',
             'upload_timestamp',
+            'is_cryptographically_verified',
         )
 
 

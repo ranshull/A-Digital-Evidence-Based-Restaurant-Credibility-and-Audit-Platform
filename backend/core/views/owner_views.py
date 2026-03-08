@@ -10,13 +10,13 @@ class OwnerApplyView(generics.CreateAPIView):
     serializer_class = OwnerApplicationSerializer
 
     def create(self, request, *args, **kwargs):
-        # One application per user; if pending exists, return it
+        # If user has a pending application, update it with new data instead of creating another
         pending = OwnerApplication.objects.filter(user=request.user, status='PENDING').first()
         if pending:
-            return Response(
-                OwnerApplicationSerializer(pending).data,
-                status=status.HTTP_200_OK,
-            )
+            serializer = self.get_serializer(pending, data=request.data, partial=False)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return super().create(request, *args, **kwargs)
 
 

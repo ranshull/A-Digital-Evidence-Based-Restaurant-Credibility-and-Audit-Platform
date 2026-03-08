@@ -35,6 +35,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
+    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    profile_picture_url = models.URLField(blank=True, null=True)  # Supabase public URL when used
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -246,12 +248,124 @@ class Evidence(models.Model):
     upload_timestamp = models.DateTimeField(auto_now_add=True)
     reviewed_timestamp = models.DateTimeField(null=True, blank=True)
 
+    # Phase 2: Cryptographic verification
+    hash_value = models.CharField(max_length=64, blank=True, null=True)
+    previous_hash = models.CharField(max_length=64, blank=True, null=True)
+    chain_index = models.PositiveIntegerField(null=True, blank=True)
+    nonce = models.CharField(max_length=64, blank=True, null=True)
+    file_content_hash = models.CharField(max_length=64, blank=True, null=True)
+    is_chain_valid = models.BooleanField(null=True, blank=True)
+    is_cryptographically_verified = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'evidence'
         ordering = ['-upload_timestamp']
 
     def __str__(self):
         return f'{self.restaurant.name} - {self.category.name} ({self.status})'
+
+
+class HashChain(models.Model):
+    """One hash chain per restaurant; links evidence in order."""
+    restaurant = models.OneToOneField(
+        Restaurant, on_delete=models.CASCADE, related_name='hash_chain'
+    )
+    genesis_hash = models.CharField(max_length=64)
+    current_hash = models.CharField(max_length=64)
+    chain_length = models.PositiveIntegerField(default=0)
+    last_verified = models.DateTimeField(null=True, blank=True)
+    is_valid = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'hash_chain'
+
+    def __str__(self):
+        return f'HashChain {self.restaurant.name} (len={self.chain_length})'
+
+
+class TamperDetection(models.Model):
+    """Record of tamper checks for a piece of evidence."""
+    evidence = models.ForeignKey(
+        Evidence, on_delete=models.CASCADE, related_name='tamper_checks'
+    )
+    detection_timestamp = models.DateTimeField(auto_now_add=True)
+    is_tampered = models.BooleanField(default=False)
+    detection_method = models.CharField(max_length=50)
+    confidence_score = models.FloatField(default=0.0)
+    findings = models.JSONField(default=dict, blank=True)
+    flagged_by = models.CharField(max_length=50, default='system')
+
+    class Meta:
+        db_table = 'tamper_detection'
+        ordering = ['-detection_timestamp']
+
+    def __str__(self):
+        return f'TamperCheck Evidence #{self.evidence_id} ({self.detection_method})'
+
+
+class EvidenceTimestamp(models.Model):
+    """Trusted timestamp token for evidence (Phase 2)."""
+    evidence = models.OneToOneField(
+        Evidence, on_delete=models.CASCADE, related_name='timestamp_record'
+    )
+    timestamp_token = models.TextField()
+    server_time = models.DateTimeField()
+    client_time = models.DateTimeField(null=True, blank=True)
+    time_authority_signature = models.TextField(blank=True, null=True)
+    hash_at_timestamp = models.CharField(max_length=64)
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'evidence_timestamp'
+
+    def __str__(self):
+        return f'Timestamp Evidence #{self.evidence_id}'
+
+
+class MerkleTree(models.Model):
+    """Merkle tree for a restaurant's evidence (audit trail)."""
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name='merkle_trees'
+    )
+    root_hash = models.CharField(max_length=64)
+    tree_depth = models.PositiveIntegerField(default=0)
+    evidence_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_valid = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'merkle_tree'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'MerkleTree {self.restaurant.name} (root={self.root_hash[:16]}...)'
+
+
+class MerkleNode(models.Model):
+    """Node in a Merkle tree (leaf or internal)."""
+    tree = models.ForeignKey(
+        MerkleTree, on_delete=models.CASCADE, related_name='nodes'
+    )
+    node_hash = models.CharField(max_length=64)
+    left_child = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='parent_left'
+    )
+    right_child = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='parent_right'
+    )
+    evidence = models.ForeignKey(
+        Evidence, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='merkle_leaf_nodes'
+    )
+    level = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = 'merkle_node'
+
+    def __str__(self):
+        return f'Node {self.node_hash[:16]}... (L{self.level})'
 
 
 class Score(models.Model):
@@ -361,12 +475,123 @@ class AuditEvidence(models.Model):
     description = models.TextField(blank=True)
     upload_timestamp = models.DateTimeField(auto_now_add=True)
 
+    # Separate audit chain (Phase 2): one chain per audit
+    hash_value = models.CharField(max_length=64, blank=True, null=True)
+    previous_hash = models.CharField(max_length=64, blank=True, null=True)
+    chain_index = models.PositiveIntegerField(null=True, blank=True)
+    nonce = models.CharField(max_length=64, blank=True, null=True)
+    file_content_hash = models.CharField(max_length=64, blank=True, null=True)
+    is_chain_valid = models.BooleanField(null=True, blank=True)
+    is_cryptographically_verified = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'audit_evidence'
         ordering = ['-upload_timestamp']
 
     def __str__(self):
         return f'Audit #{self.audit_id} - {self.restaurant.name} - {self.category.name}'
+
+
+class AuditHashChain(models.Model):
+    """One hash chain per audit; links audit evidence in order."""
+    audit = models.OneToOneField(
+        Audit, on_delete=models.CASCADE, related_name='hash_chain'
+    )
+    genesis_hash = models.CharField(max_length=64)
+    current_hash = models.CharField(max_length=64)
+    chain_length = models.PositiveIntegerField(default=0)
+    last_verified = models.DateTimeField(null=True, blank=True)
+    is_valid = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'audit_hash_chain'
+
+    def __str__(self):
+        return f'AuditHashChain Audit #{self.audit_id} (len={self.chain_length})'
+
+
+class AuditEvidenceTimestamp(models.Model):
+    """Trusted timestamp token for audit evidence (Phase 2)."""
+    audit_evidence = models.OneToOneField(
+        AuditEvidence, on_delete=models.CASCADE, related_name='timestamp_record'
+    )
+    timestamp_token = models.TextField()
+    server_time = models.DateTimeField()
+    client_time = models.DateTimeField(null=True, blank=True)
+    hash_at_timestamp = models.CharField(max_length=64)
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'audit_evidence_timestamp'
+
+    def __str__(self):
+        return f'Timestamp AuditEvidence #{self.audit_evidence_id}'
+
+
+class AuditMerkleTree(models.Model):
+    """Merkle tree for an audit's evidence (audit trail)."""
+    audit = models.ForeignKey(
+        Audit, on_delete=models.CASCADE, related_name='merkle_trees'
+    )
+    root_hash = models.CharField(max_length=64)
+    tree_depth = models.PositiveIntegerField(default=0)
+    evidence_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_valid = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'audit_merkle_tree'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'AuditMerkleTree Audit #{self.audit_id} (root={self.root_hash[:16]}...)'
+
+
+class AuditMerkleNode(models.Model):
+    """Node in an audit Merkle tree (leaf or internal)."""
+    tree = models.ForeignKey(
+        AuditMerkleTree, on_delete=models.CASCADE, related_name='nodes'
+    )
+    node_hash = models.CharField(max_length=64)
+    left_child = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='parent_left'
+    )
+    right_child = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='parent_right'
+    )
+    audit_evidence = models.ForeignKey(
+        AuditEvidence, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='merkle_leaf_nodes'
+    )
+    level = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = 'audit_merkle_node'
+
+    def __str__(self):
+        return f'AuditNode {self.node_hash[:16]}... (L{self.level})'
+
+
+class AuditTamperDetection(models.Model):
+    """Record of tamper checks for audit evidence."""
+    audit_evidence = models.ForeignKey(
+        AuditEvidence, on_delete=models.CASCADE, related_name='tamper_checks'
+    )
+    detection_timestamp = models.DateTimeField(auto_now_add=True)
+    is_tampered = models.BooleanField(default=False)
+    detection_method = models.CharField(max_length=50)
+    confidence_score = models.FloatField(default=0.0)
+    findings = models.JSONField(default=dict, blank=True)
+    flagged_by = models.CharField(max_length=50, default='system')
+
+    class Meta:
+        db_table = 'audit_tamper_detection'
+        ordering = ['-detection_timestamp']
+
+    def __str__(self):
+        return f'AuditTamperCheck AuditEvidence #{self.audit_evidence_id} ({self.detection_method})'
 
 
 class AuditScore(models.Model):

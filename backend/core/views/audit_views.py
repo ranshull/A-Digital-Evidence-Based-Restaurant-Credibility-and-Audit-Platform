@@ -1,3 +1,5 @@
+import os
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -5,13 +7,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import (
     Audit,
     AuditEvidence,
+    AuditEvidenceTimestamp,
     AuditScore,
     AuditStatus,
+    EvidenceFileType,
     Restaurant,
     RubricCategory,
     RubricSubCategory,
@@ -26,6 +31,25 @@ from ..serializers import (
 )
 from ..permissions import IsOwnerWithRestaurant, IsAdmin, IsAdminOrAuditor, IsSuperAdmin
 from ..services.scoring import recompute_restaurant_scores
+from ..utils.storage import upload_to_supabase
+from ..crypto.audit_chain import (
+    add_audit_evidence_to_chain,
+    update_audit_chain_after_append,
+)
+from ..crypto.audit_timestamps import create_audit_timestamp_token
+from ..crypto.audit_merkle import build_audit_merkle_tree
+from ..crypto.audit_tamper import run_initial_forensics_audit
+
+# Same limits as owner evidence upload
+AUDIT_EVIDENCE_ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'mp4'}
+AUDIT_EVIDENCE_MAX_FILE_SIZE = 50 * 1024 * 1024
+AUDIT_EVIDENCE_MAX_FILES = 5
+AUDIT_EXT_TO_FILE_TYPE = {
+    'jpg': EvidenceFileType.IMAGE,
+    'jpeg': EvidenceFileType.IMAGE,
+    'png': EvidenceFileType.IMAGE,
+    'mp4': EvidenceFileType.VIDEO,
+}
 
 
 class OwnerAuditRequestView(APIView):
@@ -111,7 +135,8 @@ class AuditorStartAuditView(APIView):
 
 
 class AuditorEvidenceUploadView(APIView):
-    """Auditor: upload evidence for an audit for a given category."""
+    """Auditor: upload evidence for an audit (multipart: category_id, description, files). Uses separate audit hash chain."""
+    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated, IsAdminOrAuditor]
 
     def post(self, request, pk):
@@ -126,30 +151,102 @@ class AuditorEvidenceUploadView(APIView):
         ser.is_valid(raise_exception=True)
         data = ser.validated_data
         category = get_object_or_404(RubricCategory, pk=data['category_id'], is_active=True)
+        description = (data.get('description') or '').strip()
 
-        # Reuse existing upload mechanism via owner upload pipeline would be ideal; for now assume
-        # client already uploaded files and passes URLs & metadata in body.
-        file_url = request.data.get('file_url')
-        original_filename = request.data.get('original_filename') or ''
-        mime_type = request.data.get('mime_type') or ''
-        file_size_bytes = int(request.data.get('file_size_bytes') or 0)
-        file_type = request.data.get('file_type') or 'IMAGE'
+        files = []
+        for key in list(request.FILES.keys()):
+            f = request.FILES.get(key)
+            if f:
+                files.append(f)
+        if not files:
+            return Response({'detail': 'At least one file is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(files) > AUDIT_EVIDENCE_MAX_FILES:
+            return Response(
+                {'detail': f'Maximum {AUDIT_EVIDENCE_MAX_FILES} files per upload.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        if not file_url:
-            return Response({'detail': 'file_url is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        prefix = f'audit_evidence/{audit.id}'
+        created = []
+        for f in files:
+            ext = os.path.splitext(f.name)[1].lstrip('.').lower()
+            if ext not in AUDIT_EVIDENCE_ALLOWED_EXTENSIONS:
+                return Response(
+                    {'detail': f'Allowed types: JPEG, PNG, MP4. Got: {ext}'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if f.size > AUDIT_EVIDENCE_MAX_FILE_SIZE:
+                return Response(
+                    {'detail': 'File exceeds 50MB limit.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        evidence = AuditEvidence.objects.create(
-            audit=audit,
-            restaurant=audit.restaurant,
-            category=category,
-            file_url=file_url,
-            file_type=file_type,
-            original_filename=original_filename,
-            file_size_bytes=file_size_bytes,
-            mime_type=mime_type,
-            description=data.get('description') or '',
-        )
-        return Response(AuditEvidenceSerializer(evidence).data, status=status.HTTP_201_CREATED)
+            content = f.read()
+            metadata = {
+                'timestamp': timezone.now().isoformat(),
+                'auditor_id': user.id,
+                'audit_id': audit.id,
+                'category': category.name,
+                'filename': os.path.basename(f.name),
+            }
+            try:
+                hash_data = add_audit_evidence_to_chain(audit.id, content, metadata)
+            except Exception:
+                return Response(
+                    {'detail': 'Audit hash chain computation failed.'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+            file_like = SimpleUploadedFile(
+                f.name,
+                content,
+                content_type=getattr(f, 'content_type', None),
+            )
+            try:
+                public_url, mime_type = upload_to_supabase(file_like, prefix)
+            except ValueError as e:
+                return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except RuntimeError:
+                return Response({'detail': 'Upload to storage failed.'}, status=status.HTTP_502_BAD_GATEWAY)
+
+            file_type = AUDIT_EXT_TO_FILE_TYPE.get(ext, EvidenceFileType.IMAGE)
+            evidence = AuditEvidence.objects.create(
+                audit=audit,
+                restaurant=audit.restaurant,
+                category=category,
+                file_url=public_url,
+                file_type=file_type,
+                original_filename=os.path.basename(f.name),
+                file_size_bytes=len(content),
+                mime_type=mime_type,
+                description=description,
+                hash_value=hash_data['hash_value'],
+                previous_hash=hash_data['previous_hash'],
+                chain_index=hash_data['chain_index'],
+                nonce=hash_data['nonce'],
+                file_content_hash=hash_data['file_content_hash'],
+                is_chain_valid=True,
+            )
+            update_audit_chain_after_append(audit.id, hash_data['hash_value'])
+            token = create_audit_timestamp_token(evidence.id, hash_data['hash_value'])
+            AuditEvidenceTimestamp.objects.create(
+                audit_evidence=evidence,
+                timestamp_token=token,
+                server_time=timezone.now(),
+                hash_at_timestamp=hash_data['hash_value'],
+                is_verified=True,
+            )
+            try:
+                build_audit_merkle_tree(audit.id)
+            except Exception:
+                pass
+            try:
+                run_initial_forensics_audit(evidence.id)
+            except Exception:
+                pass
+            created.append(evidence)
+
+        return Response(AuditEvidenceSerializer(created, many=True).data, status=status.HTTP_201_CREATED)
 
 
 class AuditorEvidenceListView(generics.ListAPIView):

@@ -4,6 +4,7 @@ from ..views.superadmin_views import (
     SuperAdminUserDetailView,
     SuperAdminUserCreateView,
     SuperAdminLogsView,
+    SuperAdminEvidenceSummaryView,
     SuperAdminRollbackView,
     SuperAdminReportView,
     SuperAdminStaffWorkloadView,
@@ -13,6 +14,7 @@ from ..views.superadmin_views import (
 
 urlpatterns = [
     path('users/', SuperAdminUserListView.as_view(), name='superadmin_user_list'),
+    path('evidence-summary/', SuperAdminEvidenceSummaryView.as_view(), name='superadmin_evidence_summary'),
     path('users/create/', SuperAdminUserCreateView.as_view(), name='superadmin_user_create'),
     path('users/<int:pk>/', SuperAdminUserDetailView.as_view(), name='superadmin_user_detail'),
     path('logs/', SuperAdminLogsView.as_view(), name='superadmin_logs'),

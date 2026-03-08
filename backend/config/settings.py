@@ -14,7 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # .env is in project root (parent of backend/)
 load_dotenv(BASE_DIR.parent / '.env', override=True)
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-change-in-production')
+# JWT/Signing requires ≥32 bytes (RFC 7518). Set DJANGO_SECRET_KEY to 32+ chars in production.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'dev-secret-key-min-32-chars-change-in-production-abc123',
+)
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
@@ -102,6 +106,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 SUPABASE_URL = os.environ.get('SUPABASE_URL')  # e.g. https://your-project-ref.supabase.co
 SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
 SUPABASE_MEDIA_BUCKET = os.environ.get('SUPABASE_MEDIA_BUCKET', 'media')
+
+# Phase 2: Cryptographic timestamp signing (use strong secret in production)
+CRYPTO_TIMESTAMP_SECRET = os.environ.get('CRYPTO_TIMESTAMP_SECRET', SECRET_KEY)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
