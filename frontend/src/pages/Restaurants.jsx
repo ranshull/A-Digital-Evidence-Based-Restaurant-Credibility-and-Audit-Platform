@@ -166,7 +166,9 @@ export default function Restaurants() {
               {withCoords.map((r) => (
                 <Marker key={r.id} position={[Number(r.latitude), Number(r.longitude)]}>
                   <Popup>
-                    <strong><a href={`/restaurants/${r.id}`}>{r.name}</a></strong>
+                    <strong>
+                      <Link to={`/restaurants/${r.id}`}>{r.name}</Link>
+                    </strong>
                     <br />
                     {r.address}, {r.city}
                     {r.credibility_score != null && (
@@ -176,7 +178,7 @@ export default function Restaurants() {
                       </>
                     )}
                     <br />
-                    <a href={`/restaurants/${r.id}`}>View details</a>
+                    <Link to={`/restaurants/${r.id}`}>View details</Link>
                     {r.google_maps_link && (
                       <>
                         {' · '}

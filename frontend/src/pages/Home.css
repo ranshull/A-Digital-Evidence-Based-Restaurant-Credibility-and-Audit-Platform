@@ -56,6 +56,12 @@
   transform: translateY(-1px);
 }
 
+/* Landing layout for signed-in users */
+
+.home-landing {
+  padding-top: 0;
+}
+
 .home-welcome h1 {
   font-size: 1.75rem;
   color: var(--color-text);

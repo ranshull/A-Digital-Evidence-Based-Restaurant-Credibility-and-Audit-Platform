@@ -24,7 +24,9 @@ export default function Home() {
     <div className="home">
       <div className="home-welcome">
         <h1>Welcome, {user.name}</h1>
-        <p className="home-role">Role: <strong>{user.role}</strong></p>
+        <p className="home-role">
+          Role: <strong>{user.role}</strong>
+        </p>
         <div className="home-cards">
           {user.role === 'USER' && (
             <Link to="/apply" className="card-link">
@@ -47,6 +49,22 @@ export default function Home() {
               <div className="home-card">
                 <h3>Review Applications</h3>
                 <p>Approve or reject owner applications.</p>
+              </div>
+            </Link>
+          )}
+          {user.role === 'AUDITOR' && (
+            <Link to="/admin/review" className="card-link">
+              <div className="home-card">
+                <h3>My pending work</h3>
+                <p>Review owner evidence assigned to you.</p>
+              </div>
+            </Link>
+          )}
+          {user.role === 'SUPER_ADMIN' && (
+            <Link to="/superadmin/assignments" className="card-link">
+              <div className="home-card">
+                <h3>Assignments</h3>
+                <p>Assign and oversee review work across the platform.</p>
               </div>
             </Link>
           )}

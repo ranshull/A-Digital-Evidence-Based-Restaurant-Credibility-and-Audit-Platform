@@ -52,12 +52,11 @@ export default function Layout({ children }) {
                   <Link to="/owner-dashboard" className={isActive('/owner-dashboard') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Owner Dashboard</Link>
                 )}
                 {user.role === 'AUDITOR' && (
-                  <Link to="/auditor/audits" className={isActive('/auditor/audits') ? 'layout-nav-active' : ''} onClick={closeSidebar}>My audits</Link>
+                  <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>My pending work</Link>
                 )}
                 {user.role === 'ADMIN' && (
                   <>
                     <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>My pending work</Link>
-                    <Link to="/admin/audits" className={isActive('/admin/audits') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Auditor audits</Link>
                     <Link to="/admin/applications" className={isActive('/admin/applications') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Review Applications</Link>
                   </>
                 )}
@@ -67,7 +66,7 @@ export default function Layout({ children }) {
                     <Link to="/superadmin/users/create" className={isActive('/superadmin/users/create') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Create User</Link>
                     <Link to="/superadmin/logs" className={isActive('/superadmin/logs') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Logs</Link>
                     <Link to="/superadmin/assignments" className={isActive('/superadmin/assignments') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Assignments</Link>
-                    <Link to="/superadmin/audits" className={isActive('/superadmin/audits') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Audits</Link>
+                    <Link to="/superadmin/crypto" className={isActive('/superadmin/crypto') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Crypto status</Link>
                     <Link to="/superadmin/evidence" className={isActive('/superadmin/evidence') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Evidence</Link>
                   </>
                 )}

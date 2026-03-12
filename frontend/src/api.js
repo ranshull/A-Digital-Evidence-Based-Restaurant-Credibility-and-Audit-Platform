@@ -103,16 +103,6 @@ export const scores = {
   myRestaurant: () => api.get('/score/my-restaurant/'),
 };
 
-export const auditor = {
-  myAudits: () => api.get('/audits/auditor/my/'),
-  getAudit: (id) => api.get(`/audits/auditor/${id}/`),
-  startAudit: (id) => api.post(`/audits/auditor/${id}/start/`),
-  listEvidence: (id) => api.get(`/audits/auditor/${id}/evidence/`),
-  uploadEvidence: (id, data) => api.post(`/audits/auditor/${id}/evidence/upload/`, data),
-  submitScores: (body) => api.post('/audits/auditor/score/submit/', body),
-  submitAudit: (id) => api.post(`/audits/auditor/${id}/submit/`),
-};
-
 export const superadmin = {
   listUsers: (params = {}) => api.get('/superadmin/users/', { params }),
   getUser: (id) => api.get(`/superadmin/users/${id}/`),
@@ -136,15 +126,4 @@ export const crypto = {
   verifyTimestamp: (evidenceId) => api.post(`/crypto/verify-timestamp/${evidenceId}/`),
 };
 
-export const adminAudits = {
-  pending: () => api.get('/audits/admin/pending/'),
-  get: (id) => api.get(`/audits/admin/${id}/`),
-  listEvidence: (id) => api.get(`/audits/admin/${id}/evidence/`),
-  approve: (id, review_notes = '') => api.post(`/audits/admin/${id}/approve/`, { review_notes }),
-  reject: (id, review_notes = '') => api.post(`/audits/admin/${id}/reject/`, { review_notes }),
-};
-
-export const superadminAudits = {
-  list: (params = {}) => api.get('/audits/superadmin/', { params }),
-  assign: (auditId, auditorId) => api.post(`/audits/superadmin/${auditId}/assign/`, { auditor_id: auditorId }),
-};
+// audit APIs removed: audits are no longer supported

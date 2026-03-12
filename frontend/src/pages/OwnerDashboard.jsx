@@ -178,7 +178,12 @@ export default function OwnerDashboard() {
           <Link to="/owner-dashboard/photos" className="owner-btn owner-btn-photos">Manage photos</Link>
           <Link to="/owner-dashboard/evidence" className="owner-btn owner-btn-photos">Manage evidence</Link>
           <Link to="/owner-dashboard/evidence/upload" className="owner-btn owner-btn-photos">Upload evidence</Link>
-          <a href={`/restaurants/${restaurant.id}`} target="_blank" rel="noreferrer" className="owner-btn owner-btn-view">View public listing →</a>
+          <Link
+            to={`/restaurants/${restaurant.id}`}
+            className="owner-btn owner-btn-view"
+          >
+            View public listing →
+          </Link>
         </div>
       </div>
       <div className="owner-card owner-audit-card">

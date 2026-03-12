@@ -18,8 +18,6 @@ import AdminApplications from './pages/admin/AdminApplications';
 import AdminApplicationDetail from './pages/admin/AdminApplicationDetail';
 import AdminEvidenceQueue from './pages/admin/AdminEvidenceQueue';
 import AdminScoring from './pages/admin/AdminScoring';
-import AdminAuditsList from './pages/admin/AdminAuditsList';
-import AdminAuditDetail from './pages/admin/AdminAuditDetail';
 import AdminPendingWork from './pages/admin/AdminPendingWork';
 import AdminRestaurantReview from './pages/admin/AdminRestaurantReview';
 import SuperAdminUsers from './pages/superadmin/SuperAdminUsers';
@@ -28,11 +26,9 @@ import SuperAdminCreateUser from './pages/superadmin/SuperAdminCreateUser';
 import SuperAdminLogs from './pages/superadmin/SuperAdminLogs';
 import SuperAdminReport from './pages/superadmin/SuperAdminReport';
 import SuperAdminAssignments from './pages/superadmin/SuperAdminAssignments';
-import SuperAdminAudits from './pages/superadmin/SuperAdminAudits';
 import SuperAdminEvidence from './pages/superadmin/SuperAdminEvidence';
 import SuperAdminEvidenceDetail from './pages/superadmin/SuperAdminEvidenceDetail';
-import AuditorMyAudits from './pages/auditor/AuditorMyAudits';
-import AuditorAuditDetail from './pages/auditor/AuditorAuditDetail';
+import SuperAdminCryptoStatus from './pages/superadmin/SuperAdminCryptoStatus';
 import Profile from './pages/Profile';
 import './App.css';
 
@@ -153,38 +149,6 @@ function App() {
             }
           />
           <Route
-            path="/admin/audits"
-            element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
-                <Layout><AdminAuditsList /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/audits/:id"
-            element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
-                <Layout><AdminAuditDetail /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/auditor/audits"
-            element={
-              <ProtectedRoute allowedRoles={['AUDITOR', 'SUPER_ADMIN']}>
-                <Layout><AuditorMyAudits /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/auditor/audits/:id"
-            element={
-              <ProtectedRoute allowedRoles={['AUDITOR', 'SUPER_ADMIN']}>
-                <Layout><AuditorAuditDetail /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/superadmin/users"
             element={
               <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
@@ -233,14 +197,6 @@ function App() {
             }
           />
           <Route
-            path="/superadmin/audits"
-            element={
-              <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
-                <Layout><SuperAdminAudits /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/superadmin/evidence"
             element={
               <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
@@ -253,6 +209,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
                 <Layout><SuperAdminEvidenceDetail /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/superadmin/crypto"
+            element={
+              <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+                <Layout><SuperAdminCryptoStatus /></Layout>
               </ProtectedRoute>
             }
           />
