@@ -1,7 +1,6 @@
 import os
 from io import BytesIO
 
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
@@ -12,27 +11,19 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
-from ..models import Evidence, EvidenceFileType, EvidenceStatus, RubricCategory, Restaurant, EvidenceTimestamp
+from ..models import Evidence, EvidenceFileType, EvidenceStatus, RubricCategory, Restaurant
 from ..serializers import EvidenceSerializer, EvidenceUploadSerializer
 from ..permissions import IsOwnerWithRestaurant, IsAdminOrAuditor
 from ..utils.storage import upload_to_supabase
-from ..crypto.hash_chain import add_evidence_to_chain, update_chain_after_append, verify_hash_chain
-from ..crypto.timestamps import create_timestamp_token, verify_timestamp_token, detect_backdating_attempt
-from ..crypto.merkle import build_merkle_tree
-from ..crypto.tamper import run_initial_forensics, verify_file_integrity, detect_metadata_tampering
+from ..crypto.hash_chain import verify_hash_chain
+from ..crypto.timestamps import verify_timestamp_token, detect_backdating_attempt
+from ..crypto.tamper import verify_file_integrity, detect_metadata_tampering
+from ..services.evidence_pipeline import IntegratedEvidenceSystem, HashChainError, StorageError
+from ..services.admin_verification import IntegratedAdminVerification
 
 
-# Evidence upload: JPEG, PNG, MP4 only; max 50MB per file; max 5 files
-EVIDENCE_ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'mp4'}
-EVIDENCE_MAX_FILE_SIZE = 50 * 1024 * 1024
-EVIDENCE_MAX_FILES = 5
-
-EXT_TO_FILE_TYPE = {
-    'jpg': EvidenceFileType.IMAGE,
-    'jpeg': EvidenceFileType.IMAGE,
-    'png': EvidenceFileType.IMAGE,
-    'mp4': EvidenceFileType.VIDEO,
-}
+evidence_system = IntegratedEvidenceSystem()
+admin_verifier = IntegratedAdminVerification()
 
 
 class EvidenceUploadView(APIView):
@@ -64,97 +55,22 @@ class EvidenceUploadView(APIView):
             f = request.FILES.get(key)
             if f:
                 files.append(f)
-        if not files:
-            return Response({'detail': 'At least one file is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if len(files) > EVIDENCE_MAX_FILES:
-            return Response(
-                {'detail': f'Maximum {EVIDENCE_MAX_FILES} files per upload.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        prefix = f'evidence/{restaurant.id}'
-        created = []
-        for f in files:
-            ext = os.path.splitext(f.name)[1].lstrip('.').lower()
-            if ext not in EVIDENCE_ALLOWED_EXTENSIONS:
-                return Response(
-                    {'detail': f'Allowed types: JPEG, PNG, MP4. Got: {ext}'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if f.size > EVIDENCE_MAX_FILE_SIZE:
-                return Response(
-                    {'detail': 'File exceeds 50MB limit.'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            content = f.read()
-            metadata = {
-                'timestamp': timezone.now().isoformat(),
-                'owner_id': request.user.id,
-                'category': category.name,
-                'filename': os.path.basename(f.name),
-            }
-            try:
-                hash_data = add_evidence_to_chain(restaurant.id, content, metadata)
-            except Exception:
-                return Response(
-                    {'detail': 'Hash chain computation failed.'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-
-            file_like = SimpleUploadedFile(
-                f.name,
-                content,
-                content_type=getattr(f, 'content_type', None),
-            )
-            try:
-                public_url, mime_type = upload_to_supabase(file_like, prefix)
-            except ValueError as e:
-                return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            except RuntimeError as e:
-                return Response(
-                    {'detail': str(e) or 'Upload to storage failed.'},
-                    status=status.HTTP_502_BAD_GATEWAY,
-                )
-
-            file_type = EXT_TO_FILE_TYPE.get(ext, EvidenceFileType.IMAGE)
-            evidence = Evidence.objects.create(
+        try:
+            result = evidence_system.upload_evidence_batch(
+                owner=request.user,
                 restaurant=restaurant,
-                uploaded_by=request.user,
                 category=category,
-                file_url=public_url,
-                file_type=file_type,
-                original_filename=os.path.basename(f.name),
-                file_size_bytes=len(content),
-                mime_type=mime_type,
                 description=description,
-                status=EvidenceStatus.PENDING,
-                hash_value=hash_data['hash_value'],
-                previous_hash=hash_data['previous_hash'],
-                chain_index=hash_data['chain_index'],
-                nonce=hash_data['nonce'],
-                file_content_hash=hash_data['file_content_hash'],
-                is_chain_valid=True,
+                files=files,
             )
-            update_chain_after_append(restaurant.id, hash_data['hash_value'])
-            token = create_timestamp_token(evidence.id, hash_data['hash_value'])
-            EvidenceTimestamp.objects.create(
-                evidence=evidence,
-                timestamp_token=token,
-                server_time=timezone.now(),
-                hash_at_timestamp=hash_data['hash_value'],
-                is_verified=True,
-            )
-            try:
-                build_merkle_tree(restaurant.id)
-            except Exception:
-                pass
-            try:
-                run_initial_forensics(evidence.id)
-            except Exception:
-                pass
-            created.append(evidence)
+        except ValueError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        except HashChainError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except StorageError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
 
+        created = result['evidence_list']
         serializer = EvidenceSerializer(created, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -267,23 +183,9 @@ class RestaurantEvidenceListView(generics.ListAPIView):
 
 def _run_crypto_verification(evidence):
     """Run Phase 2 crypto checks; return (all_passed: bool, failure_reasons: list)."""
-    reasons = []
-    integrity = verify_file_integrity(evidence.id)
-    if not integrity.get('is_intact', True):
-        reasons.append('file_integrity_failed')
-    chain = verify_hash_chain(evidence.restaurant_id)
-    if not chain.get('is_valid', True):
-        reasons.append('hash_chain_invalid')
-    ts_result = verify_timestamp_token(evidence.id)
-    if not ts_result.get('signature_valid', True):
-        reasons.append('timestamp_invalid')
-    backdate = detect_backdating_attempt(evidence.id)
-    if backdate.get('suspicious'):
-        reasons.append('backdating_suspicious')
-    meta = detect_metadata_tampering(evidence.id)
-    if meta.get('suspicious'):
-        reasons.append('metadata_tampering')
-    return (len(reasons) == 0, reasons)
+    result = admin_verifier.run_crypto_checks(evidence)
+    _, issues = admin_verifier._evaluate_crypto_decision(result)  # type: ignore[attr-defined]
+    return (len(issues) == 0, issues)
 
 
 class EvidenceApproveView(APIView):

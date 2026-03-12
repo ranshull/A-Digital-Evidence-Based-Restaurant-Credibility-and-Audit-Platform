@@ -14,8 +14,6 @@ from ..models import (
     RubricCategory,
     RubricSubCategory,
     EvidenceStatus,
-    Audit,
-    AuditStatus,
 )
 from ..serializers import ScoreSubmitSerializer
 from ..permissions import IsOwnerWithRestaurant, IsAdminOrAuditor
@@ -121,15 +119,10 @@ class RestaurantScorePublicView(APIView):
             (b.get('is_applicable') and b.get('score') is not None)
             for b in breakdown
         )
-        # Badge precedence: AUDITOR_VERIFIED (if latest scores come from an approved audit),
-        # otherwise ADMIN_VERIFIED if any category has a score, else PROVISIONAL.
-        auditor_verified = Audit.objects.filter(
-            restaurant=restaurant,
-            status=AuditStatus.REVIEWED_BY_ADMIN,
-        ).exists()
-        if auditor_verified and has_any:
-            badge = 'AUDITOR_VERIFIED'
-        elif has_any:
+        # With the dedicated audit workflow removed, we only distinguish between:
+        # - ADMIN_VERIFIED: at least one applicable category has a score
+        # - PROVISIONAL: no scored categories yet
+        if has_any:
             badge = 'ADMIN_VERIFIED'
         else:
             badge = 'PROVISIONAL'
@@ -155,13 +148,8 @@ class MyRestaurantScoreView(APIView):
             (b.get('is_applicable') and b.get('score') is not None)
             for b in breakdown
         )
-        auditor_verified = Audit.objects.filter(
-            restaurant=restaurant,
-            status=AuditStatus.REVIEWED_BY_ADMIN,
-        ).exists()
-        if auditor_verified and has_any:
-            badge = 'AUDITOR_VERIFIED'
-        elif has_any:
+        # Audit workflow removed: same simplified badge logic as public view.
+        if has_any:
             badge = 'ADMIN_VERIFIED'
         else:
             badge = 'PROVISIONAL'
