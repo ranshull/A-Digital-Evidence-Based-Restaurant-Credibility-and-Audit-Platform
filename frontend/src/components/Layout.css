@@ -1,58 +1,78 @@
 .layout {
   min-height: 100vh;
   display: flex;
-  background: var(--color-bg-subtle);
+  background-color: var(--color-bg-subtle);
+  background-image:
+    radial-gradient(circle at 5% 10%,  color-mix(in srgb, var(--color-primary) 22%, transparent) 0 60px, transparent 61px),
+    radial-gradient(circle at 35% 20%, color-mix(in srgb, var(--color-primary) 20%, transparent) 0 55px, transparent 56px),
+    radial-gradient(circle at 75% 8%,  color-mix(in srgb, var(--color-accent) 22%, transparent) 0 65px, transparent 66px),
+    radial-gradient(circle at 12% 65%, color-mix(in srgb, var(--color-primary) 18%, transparent) 0 70px, transparent 71px),
+    radial-gradient(circle at 55% 80%, color-mix(in srgb, var(--color-primary) 21%, transparent) 0 58px, transparent 59px),
+    radial-gradient(circle at 92% 60%, color-mix(in srgb, var(--color-accent) 20%, transparent) 0 62px, transparent 63px);
+  background-size: cover;
+  background-position: center;
   color: var(--color-text);
   padding: 0.75rem;
   box-sizing: border-box;
 }
 
-/* Toggle button - visible on small screens */
+/* Floating nav icon - always visible, toggles sidebar */
 .layout-toggle {
-  display: none;
+  display: flex;
   position: fixed;
   top: 1rem;
   left: 1rem;
   z-index: 1001;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 50%;
   cursor: pointer;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.layout-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .layout-toggle-bar {
   display: block;
-  width: 22px;
+  width: 20px;
   height: 2px;
   background: var(--color-text);
   border-radius: 1px;
 }
 
-@media (max-width: 768px) {
-  .layout-toggle {
-    display: flex;
-  }
-}
-
-/* Sidebar */
+/* Sidebar - always overlay, open only when toggle clicked */
 .layout-sidebar {
   width: 260px;
-  min-width: 260px;
+  max-width: calc(100vw - 2rem);
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 0 12px 12px 0;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
   overflow: hidden;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.layout-sidebar-open {
+  transform: translateX(0);
 }
 
 .layout-sidebar-inner {
@@ -173,20 +193,17 @@
 .layout-main {
   flex: 1;
   padding: var(--content-padding, 1.5rem);
-  max-width: 1200px;
-  margin: 0 auto;
+  padding-top: 4rem; /* space for floating icon */
   width: 100%;
   min-width: 0;
   color: var(--color-text);
-  background: var(--color-bg-subtle);
-  overflow-y: auto;
+  background: transparent;
 }
 
 /* Ensure main content is visible in both light and dark theme */
 [data-theme="light"] .layout-main,
 [data-theme="dark"] .layout-main {
   color: var(--color-text);
-  background: var(--color-bg-subtle);
 }
 
 [data-theme="light"] .layout-main h1,
@@ -196,42 +213,20 @@
   color: var(--color-text);
 }
 
+/* Overlay - click to close sidebar (only in DOM when sidebar open) */
 .layout-sidebar-overlay {
-  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
 }
 
-/* Mobile: sidebar as overlay */
 @media (max-width: 768px) {
   .layout {
-    padding: 0;
-  }
-
-  .layout-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1000;
-    transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
-    border-radius: 0 12px 12px 0;
-  }
-
-  .layout-sidebar-open {
-    transform: translateX(0);
-  }
-
-  .layout-sidebar-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    padding: 0.5rem;
   }
 
   .layout-main {
     padding: 1rem;
-    padding-top: 4rem; /* space for toggle button */
   }
 }
