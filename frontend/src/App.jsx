@@ -20,6 +20,7 @@ import AdminEvidenceQueue from './pages/admin/AdminEvidenceQueue';
 import AdminScoring from './pages/admin/AdminScoring';
 import AdminPendingWork from './pages/admin/AdminPendingWork';
 import AdminRestaurantReview from './pages/admin/AdminRestaurantReview';
+import AdminAuditWorkDetail from './pages/admin/AdminAuditWorkDetail';
 import SuperAdminUsers from './pages/superadmin/SuperAdminUsers';
 import SuperAdminUserDetail from './pages/superadmin/SuperAdminUserDetail';
 import SuperAdminCreateUser from './pages/superadmin/SuperAdminCreateUser';
@@ -129,6 +130,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
                 <Layout><AdminRestaurantReview /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/review/work/:workId"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
+                <Layout><AdminAuditWorkDetail /></Layout>
               </ProtectedRoute>
             }
           />

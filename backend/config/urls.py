@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/evidence/', include('core.urls.evidence')),
     path('api/rubric/', include('core.urls.rubric')),
     path('api/score/', include('core.urls.scoring')),
+    path('api/audits/', include('core.urls.audit')),
     path('api/superadmin/', include('core.urls.superadmin')),
     path('api/crypto/', include('core.urls.crypto')),
 ]

@@ -9,7 +9,10 @@ export default function OwnerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [auditRequestLoading, setAuditRequestLoading] = useState(false);
+  const [auditRevokeLoading, setAuditRevokeLoading] = useState(false);
   const [auditRequestMessage, setAuditRequestMessage] = useState('');
+  const [auditStatus, setAuditStatus] = useState(null);
+  const [showAuditConfirm, setShowAuditConfirm] = useState(false);
 
   useEffect(() => {
     restaurants
@@ -26,6 +29,26 @@ export default function OwnerDashboard() {
       .then(({ data }) => setScoreData(data))
       .catch(() => setScoreData(null));
   }, [restaurant]);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadAuditStatus = () => {
+      owner
+        .auditStatus()
+        .then(({ data }) => {
+          if (mounted) setAuditStatus(data?.status || null);
+        })
+        .catch(() => {
+          if (mounted) setAuditStatus(null);
+        });
+    };
+    loadAuditStatus();
+    const t = setInterval(loadAuditStatus, 20000);
+    return () => {
+      mounted = false;
+      clearInterval(t);
+    };
+  }, []);
 
   if (loading) return <div className="owner-loading">Loading dashboard...</div>;
   if (error) return <div className="owner-error">{error}</div>;
@@ -51,8 +74,43 @@ export default function OwnerDashboard() {
   const evidenceReady = approvedEvidenceCount >= 1;
   const allPending = hasAnyEvidence && approvedEvidenceCount === 0;
 
+  const submitAuditRequest = () => {
+    setShowAuditConfirm(false);
+    setAuditRequestLoading(true);
+    owner.requestAudit()
+      .then(() => {
+        setAuditRequestMessage('Audit requested. A certified auditor will be assigned by the team.');
+        setAuditStatus('PENDING');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.detail || 'Unable to request audit right now.';
+        setAuditRequestMessage(msg);
+      })
+      .finally(() => setAuditRequestLoading(false));
+  };
+
+  const handleRevokeAudit = () => {
+    setAuditRequestMessage('');
+    const ok = window.confirm('Revoke this pending audit request?');
+    if (!ok) return;
+    setAuditRevokeLoading(true);
+    owner.revokeAudit()
+      .then(() => {
+        setAuditStatus(null);
+        setAuditRequestMessage('Audit request revoked.');
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.detail || 'Unable to revoke request right now.';
+        setAuditRequestMessage(msg);
+      })
+      .finally(() => setAuditRevokeLoading(false));
+  };
+
   const handleRequestAudit = () => {
     setAuditRequestMessage('');
+    if (auditStatus === 'PENDING' || auditStatus === 'IN_PROGRESS') {
+      return;
+    }
     if (!profileComplete) {
       setAuditRequestMessage('Complete your restaurant profile before requesting an audit.');
       return;
@@ -65,17 +123,16 @@ export default function OwnerDashboard() {
       }
       return;
     }
-    setAuditRequestLoading(true);
-    owner.requestAudit()
-      .then(() => {
-        setAuditRequestMessage('Audit requested. A certified auditor will be assigned by the team.');
-      })
-      .catch((err) => {
-        const msg = err.response?.data?.detail || 'Unable to request audit right now.';
-        setAuditRequestMessage(msg);
-      })
-      .finally(() => setAuditRequestLoading(false));
+    setShowAuditConfirm(true);
   };
+
+  const auditButtonLabel = auditStatus === 'PENDING'
+    ? 'Audit request pending'
+    : auditStatus === 'IN_PROGRESS'
+      ? 'Audit in progress'
+      : auditRequestLoading
+        ? 'Requesting audit…'
+        : 'Request auditor visit';
 
   return (
     <div className="owner-dashboard">
@@ -196,13 +253,39 @@ export default function OwnerDashboard() {
             type="button"
             className="owner-btn owner-btn-audit"
             onClick={handleRequestAudit}
-            disabled={auditRequestLoading}
+            disabled={auditRequestLoading || auditRevokeLoading || auditStatus === 'PENDING' || auditStatus === 'IN_PROGRESS'}
           >
-            {auditRequestLoading ? 'Requesting audit…' : 'Request auditor visit'}
+            {auditButtonLabel}
           </button>
+          {auditStatus === 'PENDING' && (
+            <button
+              type="button"
+              className="owner-btn owner-btn-view"
+              onClick={handleRevokeAudit}
+              disabled={auditRequestLoading || auditRevokeLoading}
+            >
+              {auditRevokeLoading ? 'Revoking…' : 'Revoke request'}
+            </button>
+          )}
           {auditRequestMessage && <p className="owner-meta owner-audit-message">{auditRequestMessage}</p>}
         </div>
       </div>
+      {showAuditConfirm && (
+        <div className="owner-audit-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="owner-audit-confirm-title">
+          <div className="owner-audit-modal">
+            <h3 id="owner-audit-confirm-title">Send audit request?</h3>
+            <p>This will send your restaurant to all auditors&apos; pending work queue.</p>
+            <div className="owner-audit-modal-actions">
+              <button type="button" className="owner-btn owner-btn-view" onClick={() => setShowAuditConfirm(false)}>
+                Cancel
+              </button>
+              <button type="button" className="owner-btn owner-btn-audit" onClick={submitAuditRequest} disabled={auditRequestLoading}>
+                {auditRequestLoading ? 'Requesting audit…' : 'Confirm request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <p className="owner-intro">Your restaurant is active. Upload evidence and get it reviewed to improve your credibility score.</p>
     </div>
   );

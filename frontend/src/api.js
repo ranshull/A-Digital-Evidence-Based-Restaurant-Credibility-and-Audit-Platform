@@ -56,6 +56,8 @@ export const owner = {
     });
   },
   requestAudit: () => api.post('/audits/owner/request/'),
+  auditStatus: () => api.get('/audits/owner/status/'),
+  revokeAudit: () => api.post('/audits/owner/revoke/'),
 };
 
 export const admin = {
@@ -65,6 +67,10 @@ export const admin = {
   reject: (id, review_notes = '') => api.patch(`/admin/owner-applications/${id}/reject/`, { review_notes }),
   pendingWork: () => api.get('/admin/pending-work/'),
   acceptWork: (restaurantId) => api.post(`/admin/accept-work/${restaurantId}/`),
+  auditWork: () => api.get('/audits/admin/work/'),
+  acceptAuditWork: (workItemId) => api.post(`/audits/admin/work/${workItemId}/accept/`),
+  getAuditWork: (workItemId) => api.get(`/audits/admin/work/${workItemId}/`),
+  markAuditWorkDone: (workItemId) => api.patch(`/audits/admin/work/${workItemId}/`, { action: 'mark_done' }),
   evidence: {
     pending: (params = {}) => api.get('/evidence/pending/', { params }),
     byRestaurant: (restaurantId, params = {}) =>

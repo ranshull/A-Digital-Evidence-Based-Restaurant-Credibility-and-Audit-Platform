@@ -412,3 +412,35 @@ class RestaurantPhoto(models.Model):
         return f'{self.restaurant.name} - {self.caption or "Photo"}'
 
 
+class AuditWorkStatus(models.TextChoices):
+    PENDING = 'PENDING', 'Pending'
+    IN_PROGRESS = 'IN_PROGRESS', 'In progress'
+    DONE = 'DONE', 'Done'
+
+
+class AuditorWorkItem(models.Model):
+    """Owner-requested work item shown to admins/auditors."""
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name='audit_work_items'
+    )
+    requested_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='requested_audit_work_items'
+    )
+    assigned_to = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_audit_work_items'
+    )
+    status = models.CharField(
+        max_length=20, choices=AuditWorkStatus.choices, default=AuditWorkStatus.PENDING
+    )
+    requested_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'auditor_work_items'
+        ordering = ['-requested_at']
+
+    def __str__(self):
+        return f'{self.restaurant.name} ({self.status})'
+
+

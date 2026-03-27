@@ -1,7 +1,29 @@
-.owner-dashboard h1 {
-  font-size: 1.5rem;
+.owner-dashboard {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
-  margin-bottom: 1rem;
+  background: color-mix(in srgb, var(--color-bg-subtle) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 16px;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .owner-dashboard {
+  background: color-mix(in srgb, var(--color-bg-subtle) 58%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.owner-dashboard h1 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-align: center;
+  color: var(--color-text);
+  margin: 0 0 1.25rem;
 }
 
 .owner-loading,
@@ -15,11 +37,12 @@
 }
 
 .owner-card {
-  background: var(--color-bg);
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .owner-card h2 {
@@ -195,4 +218,42 @@ a.owner-btn-audit:hover {
 .owner-audit-message {
   margin-top: 0.5rem;
   color: var(--color-text-muted);
+}
+
+.owner-audit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+
+.owner-audit-modal {
+  width: 100%;
+  max-width: 420px;
+  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.2rem 1.25rem;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.22);
+}
+
+.owner-audit-modal h3 {
+  margin: 0 0 0.45rem;
+  color: var(--color-text);
+}
+
+.owner-audit-modal p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.owner-audit-modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.65rem;
+  justify-content: flex-end;
 }

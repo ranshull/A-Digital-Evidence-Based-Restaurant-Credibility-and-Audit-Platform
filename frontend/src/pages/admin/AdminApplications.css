@@ -1,19 +1,72 @@
 .admin-apps-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
+  background: color-mix(in srgb, var(--color-bg-subtle) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 16px;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .admin-apps-page {
+  background: color-mix(in srgb, var(--color-bg-subtle) 58%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
 .admin-apps-page h1 {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 700;
   color: var(--color-text);
+  text-align: center;
   margin-bottom: 1rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .admin-loading,
 .admin-empty {
   color: var(--color-text-muted);
   padding: 1rem 0;
+}
+
+.admin-apps-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.admin-apps-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 180px;
+}
+
+.admin-apps-filters span {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.admin-apps-filters select,
+.admin-apps-filters input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+  color: var(--color-text);
+  font-size: 0.92rem;
+}
+
+.admin-apps-filters select:focus,
+.admin-apps-filters input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .admin-error {
@@ -42,9 +95,15 @@
   margin: 0;
 }
 
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
 .admin-list-item {
   padding: 0.75rem 1rem;
-  background: var(--color-bg);
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 10px;
   margin-bottom: 0.5rem;
@@ -54,6 +113,53 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   transition: border-color 0.2s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.admin-app-card-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+}
+
+.admin-app-card-main strong {
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.admin-app-card-sub {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--color-text-muted);
+}
+
+.admin-app-card-status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.24rem 0.56rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.admin-status-pending {
+  background: color-mix(in srgb, #eab308 22%, transparent);
+  color: #b45309;
+}
+
+.admin-status-approved {
+  background: color-mix(in srgb, var(--color-success) 22%, transparent);
+  color: var(--color-success);
+}
+
+.admin-status-rejected {
+  background: color-mix(in srgb, var(--color-error) 22%, transparent);
+  color: var(--color-error);
 }
 
 .admin-list-item:hover {

@@ -111,6 +111,9 @@ export default function Restaurants() {
   const [cityFilter, setCityFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('list'); // 'list' | 'cards' | 'map'
+  const [showCardsToggle, setShowCardsToggle] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 640px)').matches : false
+  );
   const [swipeIndex, setSwipeIndex] = useState(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwipeDragging, setIsSwipeDragging] = useState(false);
@@ -152,8 +155,9 @@ export default function Restaurants() {
     const delta = swipeCurrentOffset.current;
     setSwipeOffset(0);
     setIsSwipeDragging(false);
-    if (delta > SWIPE_THRESHOLD) goNext();
-    else if (delta < -SWIPE_THRESHOLD) goPrev();
+    // Natural gesture: swipe left -> next card, swipe right -> previous card.
+    if (delta > SWIPE_THRESHOLD) goPrev();
+    else if (delta < -SWIPE_THRESHOLD) goNext();
   }, [goPrev, goNext]);
 
   const handleMouseDown = useCallback(
@@ -193,6 +197,21 @@ export default function Restaurants() {
   }, [search, cityFilter]);
 
   const withCoords = useMemo(() => list.filter((r) => r.latitude != null && r.longitude != null), [list]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const media = window.matchMedia('(max-width: 640px)');
+    const update = () => setShowCardsToggle(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    if (!showCardsToggle && view === 'cards') {
+      setView('list');
+    }
+  }, [showCardsToggle, view]);
 
   return (
     <div className="restaurants-page">
@@ -371,7 +390,7 @@ export default function Restaurants() {
       )}
 
       <div className="restaurants-view-float">
-        <div className="restaurants-view-toggle" role="group" aria-label="View toggle">
+        <div className={`restaurants-view-toggle ${showCardsToggle ? 'has-cards' : 'no-cards'}`} role="group" aria-label="View toggle">
           <span
             className={`restaurants-view-slider ${view === 'list' ? 'slider-list' : view === 'cards' ? 'slider-cards' : 'slider-map'}`}
             aria-hidden
@@ -383,13 +402,15 @@ export default function Restaurants() {
           >
             <IconList /> List
           </button>
-          <button
-            type="button"
-            className={view === 'cards' ? 'active' : ''}
-            onClick={() => setView('cards')}
-          >
-            <IconCards /> Cards
-          </button>
+          {showCardsToggle && (
+            <button
+              type="button"
+              className={view === 'cards' ? 'active' : ''}
+              onClick={() => setView('cards')}
+            >
+              <IconCards /> Cards
+            </button>
+          )}
           <button
             type="button"
             className={view === 'map' ? 'active' : ''}

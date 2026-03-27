@@ -1,7 +1,16 @@
 .superadmin-users-page {
   max-width: 900px;
-  padding: var(--content-padding, 1.5rem) 0;
+  padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
+  background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  border-radius: 16px;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+}
+
+[data-theme="dark"] .superadmin-users-page {
+  background: color-mix(in srgb, var(--color-bg-subtle) 58%, transparent);
 }
 
 .superadmin-users-header {

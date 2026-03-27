@@ -1,7 +1,19 @@
 .owner-edit-page {
   max-width: 560px;
-  padding: var(--content-padding, 1.5rem) 0;
+  margin: 0 auto;
+  padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
+  background: color-mix(in srgb, var(--color-bg-subtle) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 16px;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .owner-edit-page {
+  background: color-mix(in srgb, var(--color-bg-subtle) 58%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
 .owner-edit-back {
@@ -20,11 +32,13 @@
 }
 
 .owner-edit-page h1 {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 700;
   color: var(--color-text);
-  margin: 0 0 1.25rem 0;
-  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .owner-edit-loading {
@@ -53,11 +67,11 @@
 }
 
 .owner-edit-form {
-  background: var(--color-bg);
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 1.5rem 1.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .owner-edit-form label {

@@ -188,6 +188,14 @@
   transform: translateX(200%);
 }
 
+.restaurants-view-toggle.no-cards .restaurants-view-slider {
+  width: calc((100% - 0.6rem) / 2);
+}
+
+.restaurants-view-toggle.no-cards .restaurants-view-slider.slider-map {
+  transform: translateX(100%);
+}
+
 .restaurants-view-toggle button {
   position: relative;
   z-index: 1;
@@ -230,6 +238,7 @@
     radial-gradient(circle at 20% 30%, rgba(147, 197, 253, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(156, 163, 175, 0.06) 0%, transparent 45%),
     radial-gradient(circle at 50% 50%, rgba(147, 197, 253, 0.04) 0%, transparent 60%);
+  min-height: clamp(420px, 70dvh, 780px);
 }
 
 [data-theme="dark"] .restaurants-swipe-wrap {
@@ -242,7 +251,7 @@
 .restaurants-swipe-viewport {
   overflow: hidden;
   width: 100%;
-  max-width: 768px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
   box-sizing: border-box;
@@ -272,7 +281,7 @@
 }
 
 .restaurants-swipe-card-slot {
-  flex: 0 0 280px;
+  flex: 0 0 320px;
   min-width: 0;
   display: flex;
   justify-content: center;
@@ -282,16 +291,45 @@
 @media (max-width: 820px) {
   .restaurants-swipe-viewport {
     max-width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .restaurants-swipe-card-slot {
+    flex: 0 0 min(92vw, 520px);
   }
 }
 
 @media (max-width: 480px) {
+  .restaurants-swipe-wrap {
+    min-height: calc(100dvh - 9.5rem);
+  }
+
   .restaurants-swipe-viewport {
-    padding: 1rem 0.5rem;
+    min-height: calc(100dvh - 13rem);
+    padding: 0.5rem 0.25rem;
+    align-items: stretch;
   }
 
   .restaurants-swipe-card-slot {
-    flex: 0 0 280px;
+    flex: 0 0 calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
+  }
+
+  .restaurants-swipe-card-inner {
+    min-height: 100%;
+    border-radius: 16px;
+  }
+
+  .restaurants-swipe-card-inner .restaurant-card-carousel {
+    aspect-ratio: 16 / 9;
+  }
+
+  .restaurants-swipe-card-inner .restaurant-card-body {
+    padding: 1rem 1rem 0.5rem;
+  }
+
+  .restaurants-swipe-card-inner .restaurant-map-link {
+    margin: 0 1rem 1rem;
   }
 }
 
