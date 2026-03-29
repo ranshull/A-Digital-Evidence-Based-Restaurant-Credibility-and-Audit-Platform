@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { admin } from '../../api';
 import './AdminRestaurantReview.css';
 
 export default function AdminRestaurantReview() {
   const { restaurantId } = useParams();
+  const navigate = useNavigate();
   const [evidenceList, setEvidenceList] = useState([]);
   const [restaurantName, setRestaurantName] = useState('');
   const [rubric, setRubric] = useState([]);
@@ -19,32 +20,45 @@ export default function AdminRestaurantReview() {
   const [isApplicable, setIsApplicable] = useState(true);
   const [saving, setSaving] = useState(false);
   const [submittedSummaryByCategory, setSubmittedSummaryByCategory] = useState({});
-  const [finalSubmittedCategories, setFinalSubmittedCategories] = useState(new Set());
   const [showFormByCategory, setShowFormByCategory] = useState({});
 
-  const loadEvidence = () => {
+  const [readiness, setReadiness] = useState(null);
+  const [completeModalOpen, setCompleteModalOpen] = useState(false);
+  const [completing, setCompleting] = useState(false);
+
+  const refreshReadiness = useCallback(() => {
     if (!restaurantId) return;
+    admin
+      .reviewReadiness(restaurantId)
+      .then(({ data }) => setReadiness(data))
+      .catch(() => setReadiness({ ready: false, detail: 'Could not check readiness.' }));
+  }, [restaurantId]);
+
+  const loadEvidence = useCallback(() => {
+    if (!restaurantId) return;
+    setLoading(true);
     admin.evidence
       .byRestaurant(restaurantId)
       .then(({ data }) => {
         const list = Array.isArray(data) ? data : data.results || [];
         setEvidenceList(list);
         if (list.length > 0 && list[0].restaurant_name) setRestaurantName(list[0].restaurant_name);
+        refreshReadiness();
       })
       .catch((err) => setError(err.response?.data?.detail || 'Failed to load'))
       .finally(() => setLoading(false));
-  };
+  }, [restaurantId, refreshReadiness]);
 
   useEffect(() => {
     loadEvidence();
-  }, [restaurantId]);
+  }, [loadEvidence]);
 
   useEffect(() => {
     admin.scores.rubric().then(({ data }) => setRubric(Array.isArray(data) ? data : [])).catch(() => {});
   }, []);
 
   const category = selectedEvidence
-    ? (Array.isArray(rubric) && rubric.find((c) => c.id === Number(selectedEvidence.category) || c.id === selectedEvidence.category_id))
+    ? rubric.find((c) => c.id === Number(selectedEvidence.category) || c.id === selectedEvidence.category_id)
     : null;
 
   useEffect(() => {
@@ -142,25 +156,32 @@ export default function AdminRestaurantReview() {
           },
         }));
         setShowFormByCategory((prev) => ({ ...prev, [category.id]: false }));
+        refreshReadiness();
       })
       .catch((err) => setError(err.response?.data?.detail || 'Save failed'))
       .finally(() => setSaving(false));
   };
 
-  const handleFinalSubmit = () => {
-    if (!category) return;
-    setFinalSubmittedCategories((prev) => new Set(prev).add(category.id));
+  const handleCompleteReview = () => {
+    if (!restaurantId) return;
+    setCompleting(true);
+    admin
+      .completeReview(restaurantId)
+      .then(() => {
+        setCompleteModalOpen(false);
+        navigate('/admin/evidence?tab=completed');
+      })
+      .catch((err) => setError(err.response?.data?.detail || 'Could not complete review'))
+      .finally(() => setCompleting(false));
   };
 
   const showScoringForm =
     category &&
     selectedEvidence?.status === 'APPROVED' &&
-    !finalSubmittedCategories.has(category.id) &&
     (!submittedSummaryByCategory[category.id] || showFormByCategory[category.id] === true);
 
-  const showSummary = category && submittedSummaryByCategory[category.id];
-  const showEditAndFinal =
-    category && submittedSummaryByCategory[category.id] && !finalSubmittedCategories.has(category.id);
+  const showSummaryBlock =
+    category && selectedEvidence?.status === 'APPROVED' && submittedSummaryByCategory[category.id] && !showScoringForm;
 
   if (loading) return <div className="admin-loading">Loading...</div>;
   if (error && !evidenceList.length) return <div className="admin-error">{error}</div>;
@@ -177,14 +198,14 @@ export default function AdminRestaurantReview() {
   return (
     <div className="admin-restaurant-review">
       <p className="admin-review-back">
-        <Link to="/admin/review">← My pending work</Link>
+        <Link to="/admin/evidence">← Evidence queue</Link>
       </p>
       <h1>{restaurantName || `Restaurant ${restaurantId}`}</h1>
       {error && <div className="admin-review-error">{error}</div>}
 
       <section className="admin-review-evidence-list">
         <h2>Evidence</h2>
-        <p className="admin-review-hint">Click an evidence to view it, approve it, then score the category below.</p>
+        <p className="admin-review-hint">Select an item to approve, reject, or flag. After approval, submit scores for that category.</p>
         {evidenceList.length === 0 ? (
           <p className="admin-empty">No evidence for this restaurant.</p>
         ) : (
@@ -264,67 +285,48 @@ export default function AdminRestaurantReview() {
             <div className="admin-review-scoring">
               <h3>Scoring: {category.name}</h3>
 
-              {finalSubmittedCategories.has(category.id) && submittedSummaryByCategory[category.id] && (
-                <div className="admin-review-summary-only">
-                  <p className="admin-review-summary-title">Summary (final)</p>
-                  {submittedSummaryByCategory[category.id].isApplicable ? (
-                    <>
-                      <p><strong>Category score:</strong> {submittedSummaryByCategory[category.id].categoryScore}/100</p>
-                      <ul>
-                        {submittedSummaryByCategory[category.id].subcategories.map((s, i) => (
-                          <li key={i}>{s.name}: {s.score} {s.notes ? `— ${s.notes}` : ''}</li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : (
-                    <p>Marked as Not Applicable</p>
-                  )}
-                </div>
-              )}
-
-              {showEditAndFinal && submittedSummaryByCategory[category.id] && (
+              {showSummaryBlock && submittedSummaryByCategory[category.id] && (
                 <div className="admin-review-summary-block">
-                  <p className="admin-review-summary-title">Summary of scores submitted</p>
+                  <p className="admin-review-summary-title">Saved scores</p>
                   {submittedSummaryByCategory[category.id].isApplicable ? (
                     <>
-                      <p><strong>Category score:</strong> {submittedSummaryByCategory[category.id].categoryScore}/100</p>
+                      <p>
+                        <strong>Category score:</strong> {submittedSummaryByCategory[category.id].categoryScore}/100
+                      </p>
                       <ul>
                         {submittedSummaryByCategory[category.id].subcategories.map((s, i) => (
-                          <li key={i}>{s.name}: {s.score} {s.notes ? `— ${s.notes}` : ''}</li>
+                          <li key={i}>
+                            {s.name}: {s.score} {s.notes ? `— ${s.notes}` : ''}
+                          </li>
                         ))}
                       </ul>
                     </>
                   ) : (
                     <p>Marked as Not Applicable</p>
                   )}
-                  <div className="admin-review-summary-actions">
-                    <button
-                      type="button"
-                      className="admin-review-btn-edit"
-                      onClick={() => {
-                        const summary = submittedSummaryByCategory[category.id];
-                        if (summary?.subcategories) {
-                          const s = {};
-                          const n = {};
-                          summary.subcategories.forEach((sub) => {
-                            if (sub.id != null) {
-                              s[sub.id] = sub.score;
-                              n[sub.id] = sub.notes || '';
-                            }
-                          });
-                          setScores(s);
-                          setNotes(n);
-                          setIsApplicable(summary.isApplicable);
-                        }
-                        setShowFormByCategory((prev) => ({ ...prev, [category.id]: true }));
-                      }}
-                    >
-                      Edit scores
-                    </button>
-                    <button type="button" className="admin-review-btn-final" onClick={handleFinalSubmit}>
-                      Final submit
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="admin-review-btn-edit"
+                    onClick={() => {
+                      const summary = submittedSummaryByCategory[category.id];
+                      if (summary?.subcategories) {
+                        const s = {};
+                        const n = {};
+                        summary.subcategories.forEach((sub) => {
+                          if (sub.id != null) {
+                            s[sub.id] = sub.score;
+                            n[sub.id] = sub.notes || '';
+                          }
+                        });
+                        setScores(s);
+                        setNotes(n);
+                        setIsApplicable(summary.isApplicable);
+                      }
+                      setShowFormByCategory((prev) => ({ ...prev, [category.id]: true }));
+                    }}
+                  >
+                    Edit scores
+                  </button>
                 </div>
               )}
 
@@ -342,14 +344,20 @@ export default function AdminRestaurantReview() {
                     <>
                       {category.subcategories.map((sub) => (
                         <div key={sub.id} className="admin-review-sub">
-                          <label>{sub.name} (0–{sub.max_score || 5})</label>
+                          <label>
+                            {sub.name} (0–{sub.max_score || 5})
+                          </label>
                           <select
                             value={scores[sub.id] ?? ''}
                             onChange={(e) => handleScoreChange(sub.id, e.target.value)}
                           >
-                            {[0, 1, 2, 3, 4, 5].filter((n) => n <= (sub.max_score || 5)).map((n) => (
-                              <option key={n} value={n}>{n}</option>
-                            ))}
+                            {[0, 1, 2, 3, 4, 5]
+                              .filter((n) => n <= (sub.max_score || 5))
+                              .map((n) => (
+                                <option key={n} value={n}>
+                                  {n}
+                                </option>
+                              ))}
                           </select>
                           <input
                             type="text"
@@ -370,6 +378,45 @@ export default function AdminRestaurantReview() {
             </div>
           )}
         </section>
+      )}
+
+      <section className="admin-review-finish" aria-labelledby="finish-heading">
+        <h2 id="finish-heading">Complete restaurant review</h2>
+        <p className="admin-review-readiness">
+          {readiness?.ready ? (
+            <span className="admin-review-ready">All requirements met. You can finalize this review.</span>
+          ) : (
+            <span>{readiness?.detail || 'Resolve all pending evidence and finish scoring for categories with approved evidence.'}</span>
+          )}
+        </p>
+        <button
+          type="button"
+          className="admin-review-btn-complete"
+          disabled={!readiness?.ready}
+          onClick={() => setCompleteModalOpen(true)}
+        >
+          Complete restaurant review
+        </button>
+      </section>
+
+      {completeModalOpen && (
+        <div className="admin-review-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="complete-modal-title">
+          <div className="admin-review-modal">
+            <h2 id="complete-modal-title">Finalize review?</h2>
+            <p>
+              This marks the evidence review complete, clears your assignment on this restaurant, and records completion. You can
+              still find a summary under Evidence queue → Completed.
+            </p>
+            <div className="admin-review-modal-actions">
+              <button type="button" className="admin-review-btn-cancel" onClick={() => setCompleteModalOpen(false)} disabled={completing}>
+                Cancel
+              </button>
+              <button type="button" className="admin-review-btn-confirm" onClick={handleCompleteReview} disabled={completing}>
+                {completing ? 'Saving…' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

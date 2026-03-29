@@ -69,8 +69,7 @@ export default function RestaurantDetail() {
               </span>
               <span className={`restaurant-detail-score-badge ${(scoreData.badge || '').toLowerCase().replace('_', '-')}`}>
                 {scoreData.badge === 'AUDITOR_VERIFIED' && 'Auditor verified'}
-                {scoreData.badge === 'ADMIN_VERIFIED' && 'Admin verified'}
-                {scoreData.badge === 'PROVISIONAL' && 'Provisional'}
+                {(scoreData.badge === 'PROVISIONAL' || scoreData.badge === 'ADMIN_VERIFIED') && 'Provisional'}
                 {!['AUDITOR_VERIFIED', 'ADMIN_VERIFIED', 'PROVISIONAL'].includes(scoreData.badge) && (scoreData.badge || '—')}
               </span>
             </div>

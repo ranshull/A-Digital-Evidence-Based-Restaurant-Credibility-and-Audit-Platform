@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -14,7 +16,10 @@ from ..models import (
     Score,
     EvidenceStatus,
     HashChain,
+    AuditorWorkItem,
+    AuditSubmissionStatus,
 )
+from ..services.audit_publish import rollback_audit_publish
 from ..serializers import (
     SuperAdminUserListSerializer,
     SuperAdminUserCreateSerializer,
@@ -55,10 +60,21 @@ class SuperAdminUserCreateView(generics.CreateAPIView):
 
 
 class SuperAdminLogsView(APIView):
-    """Super Admin: list work done and pending per restaurant (from Evidence + Score)."""
+    """Super Admin: admin lane = evidence + scores per restaurant; auditor lane = on-site audit work items."""
     permission_classes = [IsSuperAdmin]
 
     def get(self, request):
+        lane = request.query_params.get('lane', 'admin').strip().lower()
+        if lane not in ('admin', 'auditor'):
+            return Response(
+                {'detail': 'Invalid lane. Use admin or auditor.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if lane == 'auditor':
+            return Response(self._auditor_logs())
+        return Response(self._admin_logs())
+
+    def _admin_logs(self):
         restaurants = Restaurant.objects.all().order_by('name')
         result = []
         for r in restaurants:
@@ -87,6 +103,19 @@ class SuperAdminLogsView(APIView):
                         'scored_by_email': s.scored_by.email if s.scored_by_id else None,
                         'scored_timestamp': s.scored_timestamp,
                     })
+            # On-site audit: published to owner (who approved, when)
+            audit_publishes = []
+            for w in AuditorWorkItem.objects.filter(
+                restaurant=r,
+                submission_status=AuditSubmissionStatus.PUBLISHED,
+            ).select_related('published_by', 'assigned_to'):
+                audit_publishes.append({
+                    'work_item_id': w.id,
+                    'published_at': w.published_at,
+                    'published_by_name': w.published_by.name if w.published_by_id else None,
+                    'published_by_email': w.published_by.email if w.published_by_id else None,
+                    'field_auditor_name': w.assigned_to.name if w.assigned_to_id else None,
+                })
             # Pending: count PENDING evidence; whether restaurant has any scores
             pending_evidence_count = Evidence.objects.filter(restaurant=r, status=EvidenceStatus.PENDING).count()
             has_scores = Score.objects.filter(restaurant=r).exists()
@@ -96,13 +125,36 @@ class SuperAdminLogsView(APIView):
                 'work_done': {
                     'evidence_reviews': evidence_reviews,
                     'score_submissions': score_submissions,
+                    'audit_publishes': audit_publishes,
                 },
                 'pending': {
                     'pending_evidence_count': pending_evidence_count,
                     'has_scores': has_scores,
                 },
             })
-        return Response(result)
+        return result
+
+    def _auditor_logs(self):
+        items = AuditorWorkItem.objects.select_related(
+            'restaurant', 'requested_by', 'assigned_to'
+        ).order_by('-requested_at')
+        by_restaurant = defaultdict(lambda: {'audit_work_items': []})
+        for w in items:
+            bucket = by_restaurant[w.restaurant_id]
+            bucket['restaurant_id'] = w.restaurant_id
+            bucket['restaurant_name'] = w.restaurant.name
+            bucket['audit_work_items'].append({
+                'work_item_id': w.id,
+                'status': w.status,
+                'requested_by_name': w.requested_by.name if w.requested_by_id else None,
+                'requested_by_email': w.requested_by.email if w.requested_by_id else None,
+                'assigned_to_name': w.assigned_to.name if w.assigned_to_id else None,
+                'assigned_to_email': w.assigned_to.email if w.assigned_to_id else None,
+                'requested_at': w.requested_at,
+                'accepted_at': w.accepted_at,
+                'completed_at': w.completed_at,
+            })
+        return sorted(by_restaurant.values(), key=lambda x: (x['restaurant_name'] or '').lower())
 
 
 class SuperAdminEvidenceSummaryView(APIView):
@@ -123,12 +175,13 @@ class SuperAdminEvidenceSummaryView(APIView):
 
 
 class SuperAdminRollbackView(APIView):
-    """Super Admin: rollback a restaurant to initial state (evidence PENDING, scores removed)."""
+    """Super Admin: rollback a restaurant (evidence PENDING, scores removed, audit work items deleted)."""
     permission_classes = [IsSuperAdmin]
 
     def post(self, request, restaurant_id):
         restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
         with transaction.atomic():
+            AuditorWorkItem.objects.filter(restaurant=restaurant).delete()
             # Reset all evidence to PENDING and clear review fields
             Evidence.objects.filter(restaurant=restaurant).update(
                 status=EvidenceStatus.PENDING,
@@ -144,9 +197,42 @@ class SuperAdminRollbackView(APIView):
             restaurant.score_breakdown = None
             restaurant.review_assigned_to = None
             restaurant.review_assigned_at = None
-            restaurant.save(update_fields=['credibility_score', 'last_audit_at', 'score_breakdown', 'review_assigned_to', 'review_assigned_at'])
+            restaurant.review_completed_at = None
+            restaurant.review_completed_by = None
+            restaurant.save(update_fields=[
+                'credibility_score', 'last_audit_at', 'score_breakdown',
+                'review_assigned_to', 'review_assigned_at',
+                'review_completed_at', 'review_completed_by',
+            ])
         return Response(
             {'detail': 'Restaurant rolled back to initial state.', 'restaurant_id': restaurant_id},
+            status=status.HTTP_200_OK,
+        )
+
+
+class SuperAdminRollbackAuditPublishView(APIView):
+    """Super Admin: undo a published on-site audit (remove those scores, reopen visit for admin)."""
+    permission_classes = [IsSuperAdmin]
+
+    def post(self, request, work_item_id):
+        work = get_object_or_404(AuditorWorkItem, pk=work_item_id)
+        if work.submission_status != AuditSubmissionStatus.PUBLISHED:
+            return Response(
+                {'detail': 'Only a published on-site audit visit can be rolled back this way.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            rollback_audit_publish(work)
+        except ValueError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {
+                'detail': 'Published audit scores removed; visit returned to admin review.',
+                'work_item_id': work.id,
+                'restaurant_id': work.restaurant_id,
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -248,9 +334,9 @@ class SuperAdminAssignWorkView(APIView):
             )
         restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
         user = get_object_or_404(User, pk=user_id)
-        if user.role not in (Role.ADMIN, Role.AUDITOR):
+        if user.role not in (Role.ADMIN, Role.SUPER_ADMIN):
             return Response(
-                {'detail': 'Can only assign work to Admin or Auditor.'},
+                {'detail': 'Evidence review can only be assigned to Admin or Super Admin.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if not Evidence.objects.filter(restaurant=restaurant, status=EvidenceStatus.PENDING).exists():

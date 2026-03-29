@@ -13,7 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..models import Evidence, EvidenceFileType, EvidenceStatus, RubricCategory, Restaurant
 from ..serializers import EvidenceSerializer, EvidenceUploadSerializer
-from ..permissions import IsOwnerWithRestaurant, IsAdminOrAuditor
+from ..permissions import IsOwnerWithRestaurant, IsAdminOrSuperAdmin
 from ..utils.storage import upload_to_supabase
 from ..crypto.hash_chain import verify_hash_chain
 from ..crypto.timestamps import verify_timestamp_token, detect_backdating_attempt
@@ -97,9 +97,9 @@ class MyRestaurantEvidenceListView(generics.ListAPIView):
 
 
 class EvidenceDetailView(generics.RetrieveAPIView):
-    """Admin/Auditor/Super Admin: retrieve single evidence (for detail view and crypto actions)."""
+    """Admin/Super Admin: retrieve single evidence (for detail view and crypto actions)."""
     serializer_class = EvidenceSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
     queryset = Evidence.objects.select_related('restaurant', 'category', 'uploaded_by')
 
 
@@ -115,9 +115,9 @@ class EvidenceDeleteView(generics.DestroyAPIView):
 
 
 class PendingEvidenceListView(generics.ListAPIView):
-    """Admin/Auditor: list evidence with filters (pending queue)."""
+    """Admin/Super Admin: list evidence with filters (pending queue)."""
     serializer_class = EvidenceSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def get_queryset(self):
         qs = Evidence.objects.select_related(
@@ -157,9 +157,9 @@ def _can_access_assigned_restaurant(request, restaurant):
 
 
 class RestaurantEvidenceListView(generics.ListAPIView):
-    """Admin/Auditor: list evidence for a specific restaurant (only if assigned to you or unassigned)."""
+    """Admin/Super Admin: list evidence for a specific restaurant (only if assigned to you or unassigned)."""
     serializer_class = EvidenceSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -189,8 +189,8 @@ def _run_crypto_verification(evidence):
 
 
 class EvidenceApproveView(APIView):
-    """Admin/Auditor: approve evidence (only if restaurant assigned to you or unassigned)."""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    """Admin/Super Admin: approve evidence (only if restaurant assigned to you or unassigned)."""
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request, pk):
         evidence = get_object_or_404(Evidence.objects.select_related('restaurant'), pk=pk)
@@ -219,8 +219,8 @@ class EvidenceApproveView(APIView):
 
 
 class EvidenceRejectView(APIView):
-    """Admin/Auditor: reject evidence (review_notes required)."""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    """Admin/Super Admin: reject evidence (review_notes required)."""
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request, pk):
         evidence = get_object_or_404(Evidence.objects.select_related('restaurant'), pk=pk)
@@ -236,8 +236,8 @@ class EvidenceRejectView(APIView):
 
 
 class EvidenceFlagView(APIView):
-    """Admin/Auditor: flag evidence for secondary review."""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    """Admin/Super Admin: flag evidence for secondary review."""
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request, pk):
         evidence = get_object_or_404(Evidence.objects.select_related('restaurant'), pk=pk)

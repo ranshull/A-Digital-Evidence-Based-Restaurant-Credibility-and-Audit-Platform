@@ -159,6 +159,14 @@ class Restaurant(models.Model):
         related_name='assigned_review_restaurants',
     )
     review_assigned_at = models.DateTimeField(null=True, blank=True)
+    review_completed_at = models.DateTimeField(null=True, blank=True)
+    review_completed_by = models.ForeignKey(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='completed_review_restaurants',
+    )
 
     class Meta:
         db_table = 'restaurants'
@@ -418,6 +426,13 @@ class AuditWorkStatus(models.TextChoices):
     DONE = 'DONE', 'Done'
 
 
+class AuditSubmissionStatus(models.TextChoices):
+    DRAFT = 'DRAFT', 'Draft'
+    SUBMITTED_TO_ADMIN = 'SUBMITTED_TO_ADMIN', 'Submitted to admin'
+    PUBLISHED = 'PUBLISHED', 'Published'
+    FLAGGED = 'FLAGGED', 'Flagged'
+
+
 class AuditorWorkItem(models.Model):
     """Owner-requested work item shown to admins/auditors."""
     restaurant = models.ForeignKey(
@@ -432,6 +447,28 @@ class AuditorWorkItem(models.Model):
     status = models.CharField(
         max_length=20, choices=AuditWorkStatus.choices, default=AuditWorkStatus.PENDING
     )
+    submission_status = models.CharField(
+        max_length=30,
+        choices=AuditSubmissionStatus.choices,
+        default=AuditSubmissionStatus.DRAFT,
+    )
+    category_photos_saved = models.JSONField(default=list, blank=True)
+    category_marked_na = models.JSONField(default=list, blank=True)
+    submitted_to_admin_at = models.DateTimeField(null=True, blank=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    published_by = models.ForeignKey(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='audit_work_items_published',
+    )
+    flagged_at = models.DateTimeField(null=True, blank=True)
+    staging_edit_log = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='Admin edits to staging scores: list of {at, admin_name, reason, category_id}.',
+    )
     requested_at = models.DateTimeField(auto_now_add=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
@@ -442,5 +479,56 @@ class AuditorWorkItem(models.Model):
 
     def __str__(self):
         return f'{self.restaurant.name} ({self.status})'
+
+
+class AuditWorkCategoryPhoto(models.Model):
+    """Photos captured on-site by an auditor during a visit, grouped by rubric category."""
+    work_item = models.ForeignKey(
+        AuditorWorkItem, on_delete=models.CASCADE, related_name='category_photos'
+    )
+    category = models.ForeignKey(
+        'RubricCategory', on_delete=models.CASCADE, related_name='audit_work_category_photos'
+    )
+    image_url = models.URLField(max_length=500)
+    uploaded_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='audit_work_category_photos'
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    display_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = 'audit_work_category_photos'
+        ordering = ['category_id', 'display_order', 'id']
+
+    def __str__(self):
+        return f'Audit photo {self.work_item_id} / cat {self.category_id}'
+
+
+class AuditVisitScore(models.Model):
+    """Staged on-site audit scores per work item; published to Score only after admin approval."""
+    work_item = models.ForeignKey(
+        AuditorWorkItem, on_delete=models.CASCADE, related_name='staging_scores'
+    )
+    category = models.ForeignKey(
+        'RubricCategory', on_delete=models.CASCADE, related_name='audit_visit_scores'
+    )
+    subcategory = models.ForeignKey(
+        'RubricSubCategory', on_delete=models.CASCADE, related_name='audit_visit_scores'
+    )
+    score = models.PositiveIntegerField()
+    notes = models.TextField(blank=True)
+    is_category_applicable = models.BooleanField(default=True)
+    scored_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='audit_visit_scores_given'
+    )
+    scored_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'audit_visit_scores'
+        ordering = ['category_id', 'subcategory_id']
+        unique_together = [['work_item', 'subcategory']]
+
+    def __str__(self):
+        return f'AuditVisitScore w{self.work_item_id} sub{self.subcategory_id}'
 
 

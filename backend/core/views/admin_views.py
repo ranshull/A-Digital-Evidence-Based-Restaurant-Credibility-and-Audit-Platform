@@ -1,12 +1,19 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import get_user_model
 from ..models import OwnerApplication, Restaurant, Evidence
 from ..serializers import OwnerApplicationSerializer, OwnerApplicationListSerializer, AdminApproveRejectSerializer
-from ..permissions import IsAdmin, IsAdminOrAuditor
+from ..permissions import IsAdmin, IsAdminOrSuperAdmin
+from ..services.review_workflow import (
+    validate_restaurant_review_complete,
+    evidence_counts_for_restaurant,
+)
+from .evidence_views import _can_access_assigned_restaurant
 
 User = get_user_model()
 
@@ -93,8 +100,8 @@ class AdminRejectView(generics.GenericAPIView):
 
 
 class AdminPendingWorkView(APIView):
-    """Admin/Auditor: list restaurants with pending evidence that are unassigned or assigned to me."""
-    permission_classes = [IsAdminOrAuditor]
+    """Admin/Super Admin: list restaurants with pending evidence that are unassigned or assigned to me."""
+    permission_classes = [IsAdminOrSuperAdmin]
 
     def get(self, request):
         user = request.user
@@ -117,8 +124,8 @@ class AdminPendingWorkView(APIView):
 
 
 class AdminAcceptWorkView(APIView):
-    """Admin/Auditor: accept (claim) work for a restaurant; assigns it to current user."""
-    permission_classes = [IsAdminOrAuditor]
+    """Admin/Super Admin: accept (claim) work for a restaurant; assigns it to current user."""
+    permission_classes = [IsAdminOrSuperAdmin]
 
     def post(self, request, restaurant_id):
         restaurant = Restaurant.objects.filter(pk=restaurant_id).first()
@@ -136,3 +143,78 @@ class AdminAcceptWorkView(APIView):
             'restaurant_id': restaurant.id,
             'restaurant_name': restaurant.name,
         }, status=status.HTTP_200_OK)
+
+
+class AdminReviewReadinessView(APIView):
+    """Admin/Super Admin: check if restaurant can complete evidence review (no pending + scoring complete)."""
+    permission_classes = [IsAdminOrSuperAdmin]
+
+    def get(self, request, restaurant_id):
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+        if not _can_access_assigned_restaurant(request, restaurant):
+            raise PermissionDenied('This work is assigned to another user.')
+        ok, msg = validate_restaurant_review_complete(restaurant)
+        return Response({
+            'ready': ok,
+            'detail': msg or '',
+        })
+
+
+class AdminCompleteReviewView(APIView):
+    """Admin/Super Admin: finalize evidence review — clears assignment, records completion."""
+    permission_classes = [IsAdminOrSuperAdmin]
+
+    def post(self, request, restaurant_id):
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+        if not _can_access_assigned_restaurant(request, restaurant):
+            raise PermissionDenied('This work is assigned to another user.')
+        ok, msg = validate_restaurant_review_complete(restaurant)
+        if not ok:
+            return Response({'detail': msg}, status=status.HTTP_400_BAD_REQUEST)
+        now = timezone.now()
+        restaurant.review_assigned_to = None
+        restaurant.review_assigned_at = None
+        restaurant.review_completed_at = now
+        restaurant.review_completed_by = request.user
+        restaurant.save(update_fields=[
+            'review_assigned_to',
+            'review_assigned_at',
+            'review_completed_at',
+            'review_completed_by',
+        ])
+        return Response({
+            'detail': 'Review marked complete.',
+            'restaurant_id': restaurant.id,
+            'restaurant_name': restaurant.name,
+            'credibility_score': float(restaurant.credibility_score)
+            if restaurant.credibility_score is not None
+            else None,
+            'score_breakdown': restaurant.score_breakdown,
+            'evidence_counts': evidence_counts_for_restaurant(restaurant),
+            'review_completed_at': restaurant.review_completed_at,
+        })
+
+
+class AdminReviewHistoryView(APIView):
+    """Admin/Super Admin: list restaurants with a completed evidence review (read-only summary)."""
+    permission_classes = [IsAdminOrSuperAdmin]
+
+    def get(self, request):
+        qs = Restaurant.objects.filter(review_completed_at__isnull=False).order_by(
+            '-review_completed_at'
+        )
+        if request.query_params.get('mine') == '1':
+            qs = qs.filter(review_completed_by=request.user)
+        qs = qs[:100]
+        result = []
+        for r in qs:
+            result.append({
+                'restaurant_id': r.id,
+                'restaurant_name': r.name,
+                'credibility_score': float(r.credibility_score) if r.credibility_score is not None else None,
+                'score_breakdown': r.score_breakdown,
+                'evidence_counts': evidence_counts_for_restaurant(r),
+                'review_completed_at': r.review_completed_at,
+                'completed_by_name': r.review_completed_by.name if r.review_completed_by_id else None,
+            })
+        return Response(result)

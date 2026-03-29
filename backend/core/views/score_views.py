@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
 from ..models import (
+    AuditSubmissionStatus,
+    AuditorWorkItem,
     Restaurant,
     Score,
     Evidence,
@@ -16,14 +18,14 @@ from ..models import (
     EvidenceStatus,
 )
 from ..serializers import ScoreSubmitSerializer
-from ..permissions import IsOwnerWithRestaurant, IsAdminOrAuditor
+from ..permissions import IsOwnerWithRestaurant, IsAdminOrSuperAdmin
 from ..services.scoring import recompute_restaurant_scores
 from ..services.improvement import get_improvement_suggestions
 
 
 class ScoreSubmitView(APIView):
-    """Admin/Auditor: submit scores for a category (overwrites existing for that category)."""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    """Admin/Super Admin: submit scores for a category (overwrites existing for that category)."""
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request):
         ser = ScoreSubmitSerializer(data=request.data)
@@ -119,11 +121,13 @@ class RestaurantScorePublicView(APIView):
             (b.get('is_applicable') and b.get('score') is not None)
             for b in breakdown
         )
-        # With the dedicated audit workflow removed, we only distinguish between:
-        # - ADMIN_VERIFIED: at least one applicable category has a score
-        # - PROVISIONAL: no scored categories yet
-        if has_any:
-            badge = 'ADMIN_VERIFIED'
+        # Desk-only (evidence + admin) scores stay PROVISIONAL until an on-site audit is published.
+        auditor_published = AuditorWorkItem.objects.filter(
+            restaurant=restaurant,
+            submission_status=AuditSubmissionStatus.PUBLISHED,
+        ).exists()
+        if has_any and auditor_published:
+            badge = 'AUDITOR_VERIFIED'
         else:
             badge = 'PROVISIONAL'
         return Response({
@@ -131,6 +135,7 @@ class RestaurantScorePublicView(APIView):
             'overall_score': float(score) if score is not None else None,
             'badge': badge,
             'last_audit_at': last_audit,
+            'auditor_visit_published': auditor_published,
             'categories': breakdown,
         })
 
@@ -148,9 +153,13 @@ class MyRestaurantScoreView(APIView):
             (b.get('is_applicable') and b.get('score') is not None)
             for b in breakdown
         )
-        # Audit workflow removed: same simplified badge logic as public view.
-        if has_any:
-            badge = 'ADMIN_VERIFIED'
+        # Desk-only scores = PROVISIONAL; published field audit overrides to AUDITOR_VERIFIED.
+        auditor_published = AuditorWorkItem.objects.filter(
+            restaurant=restaurant,
+            submission_status=AuditSubmissionStatus.PUBLISHED,
+        ).exists()
+        if has_any and auditor_published:
+            badge = 'AUDITOR_VERIFIED'
         else:
             badge = 'PROVISIONAL'
 
@@ -171,6 +180,7 @@ class MyRestaurantScoreView(APIView):
             'overall_score': float(score) if score is not None else None,
             'badge': badge,
             'last_audit_at': last_audit,
+            'auditor_visit_published': auditor_published,
             'categories': breakdown,
             'evidence_counts': evidence_counts,
             'suggestions': suggestions,

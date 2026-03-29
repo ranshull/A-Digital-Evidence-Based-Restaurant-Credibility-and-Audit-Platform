@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Evidence, Restaurant
-from ..permissions import IsAdminOrAuditor
+from ..permissions import IsAdminOrSuperAdmin
 from ..crypto.hash_chain import verify_hash_chain
 from ..crypto.tamper import verify_file_integrity, detect_metadata_tampering
 from ..crypto.timestamps import verify_timestamp_token, detect_backdating_attempt
@@ -16,7 +16,7 @@ from ..crypto.merkle import generate_merkle_proof, verify_merkle_proof
 
 class VerifyChainView(APIView):
     """POST /api/crypto/verify-chain/<restaurant_id>/"""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request, restaurant_id):
         get_object_or_404(Restaurant, pk=restaurant_id)
@@ -26,7 +26,7 @@ class VerifyChainView(APIView):
 
 class IntegrityCheckView(APIView):
     """GET /api/crypto/integrity-check/<evidence_id>/"""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def get(self, request, evidence_id):
         evidence = get_object_or_404(Evidence, pk=evidence_id)
@@ -40,7 +40,7 @@ class IntegrityCheckView(APIView):
 
 class MerkleProofView(APIView):
     """GET /api/crypto/merkle-proof/<evidence_id>/"""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def get(self, request, evidence_id):
         evidence = get_object_or_404(Evidence, pk=evidence_id)
@@ -63,7 +63,7 @@ class MerkleProofView(APIView):
 
 class VerifyTimestampView(APIView):
     """POST /api/crypto/verify-timestamp/<evidence_id>/"""
-    permission_classes = [IsAuthenticated, IsAdminOrAuditor]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperAdmin]
 
     def post(self, request, evidence_id):
         get_object_or_404(Evidence, pk=evidence_id)

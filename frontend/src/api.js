@@ -67,10 +67,31 @@ export const admin = {
   reject: (id, review_notes = '') => api.patch(`/admin/owner-applications/${id}/reject/`, { review_notes }),
   pendingWork: () => api.get('/admin/pending-work/'),
   acceptWork: (restaurantId) => api.post(`/admin/accept-work/${restaurantId}/`),
+  reviewReadiness: (restaurantId) => api.get(`/admin/review-readiness/${restaurantId}/`),
+  completeReview: (restaurantId) => api.post(`/admin/complete-review/${restaurantId}/`),
+  reviewHistory: (params = {}) => api.get('/admin/review-history/', { params }),
   auditWork: () => api.get('/audits/admin/work/'),
   acceptAuditWork: (workItemId) => api.post(`/audits/admin/work/${workItemId}/accept/`),
   getAuditWork: (workItemId) => api.get(`/audits/admin/work/${workItemId}/`),
-  markAuditWorkDone: (workItemId) => api.patch(`/audits/admin/work/${workItemId}/`, { action: 'mark_done' }),
+  auditWorkPhotos: (workItemId) => api.get(`/audits/admin/work/${workItemId}/photos/`),
+  uploadAuditWorkPhoto: (workItemId, file, categoryId) => {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('category_id', String(categoryId));
+    return api.post(`/audits/admin/work/${workItemId}/photos/`, form);
+  },
+  deleteAuditWorkPhoto: (workItemId, photoId) =>
+    api.delete(`/audits/admin/work/${workItemId}/photos/${photoId}/`),
+  saveAuditCategoryPhotos: (workItemId, categoryId) =>
+    api.post(`/audits/admin/work/${workItemId}/save-category-photos/`, { category_id: categoryId }),
+  submitAuditStagingScores: (workItemId, body) =>
+    api.post(`/audits/admin/work/${workItemId}/staging-scores/`, body),
+  submitAuditToAdmin: (workItemId) => api.post(`/audits/admin/work/${workItemId}/submit-to-admin/`),
+  auditorEvidenceList: () => api.get('/admin/auditor-evidence/'),
+  auditorEvidenceDetail: (workItemId) => api.get(`/admin/auditor-evidence/${workItemId}/`),
+  auditorEvidenceApprove: (workItemId) => api.post(`/admin/auditor-evidence/${workItemId}/approve/`),
+  auditorEvidenceStagingScores: (workItemId, body) =>
+    api.patch(`/admin/auditor-evidence/${workItemId}/staging-scores/`, body),
   evidence: {
     pending: (params = {}) => api.get('/evidence/pending/', { params }),
     byRestaurant: (restaurantId, params = {}) =>
@@ -114,8 +135,9 @@ export const superadmin = {
   getUser: (id) => api.get(`/superadmin/users/${id}/`),
   updateUser: (id, data) => api.patch(`/superadmin/users/${id}/`, data),
   createUser: (data) => api.post('/superadmin/users/create/', data),
-  logs: () => api.get('/superadmin/logs/'),
+  logs: (params = {}) => api.get('/superadmin/logs/', { params }),
   rollbackRestaurant: (restaurantId) => api.post(`/superadmin/rollback-restaurant/${restaurantId}/`),
+  rollbackAuditPublish: (workItemId) => api.post(`/superadmin/rollback-audit-publish/${workItemId}/`),
   report: (restaurantId) => api.get(`/superadmin/report/${restaurantId}/`),
   staffWorkload: (params = {}) => api.get('/superadmin/staff-workload/', { params }),
   unassignedWork: () => api.get('/superadmin/unassigned-work/'),
@@ -132,4 +154,3 @@ export const crypto = {
   verifyTimestamp: (evidenceId) => api.post(`/crypto/verify-timestamp/${evidenceId}/`),
 };
 
-// audit APIs removed: audits are no longer supported

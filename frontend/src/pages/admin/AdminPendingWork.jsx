@@ -45,18 +45,18 @@ export default function AdminPendingWork() {
 
   const handleAcceptCancel = () => setConfirmWork(null);
 
-  if (loading) return <div className="admin-loading">Loading pending work...</div>;
+  if (loading) return <div className="admin-loading">Loading audit visit requests...</div>;
   if (error && workItems.length === 0) return <div className="admin-error">{error}</div>;
 
   return (
     <div className="admin-pending-work">
-      <h1>My pending work</h1>
+      <h1>Audit visit requests</h1>
       <p className="admin-pending-intro">
-        Restaurants requested by owners for auditor visit. Click a pending card to accept it.
+        Restaurants that requested an on-site auditor visit. Click a card to accept or open it.
       </p>
       {error && <div className="admin-error-banner">{error}</div>}
       {workItems.length === 0 ? (
-        <p className="admin-empty">No pending evidence. All clear.</p>
+        <p className="admin-empty">No audit visit requests right now. Owners will appear here when they request an on-site visit.</p>
       ) : (
         <ul className="admin-pending-list">
           {workItems.map((w) => (

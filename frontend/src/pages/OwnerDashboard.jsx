@@ -175,16 +175,17 @@ export default function OwnerDashboard() {
             <span className="owner-score-value">
               {overall != null ? `${Math.round(overall)}/100` : '—'}
             </span>
-            <span className={`owner-score-badge ${badge === 'ADMIN_VERIFIED' ? 'verified' : ''} ${badge === 'AUDITOR_VERIFIED' ? 'auditor-verified' : ''}`}>
-              {badge === 'AUDITOR_VERIFIED'
-                ? 'Auditor verified'
-                : badge === 'ADMIN_VERIFIED'
-                  ? 'Admin verified'
-                  : 'Provisional'}
+            <span className={`owner-score-badge ${badge === 'AUDITOR_VERIFIED' ? 'auditor-verified' : ''}`}>
+              {badge === 'AUDITOR_VERIFIED' ? 'Auditor verified' : 'Provisional'}
             </span>
           </div>
           {lastAudit && (
             <p className="owner-meta">Last reviewed: {new Date(lastAudit).toLocaleDateString()}</p>
+          )}
+          {scoreData?.auditor_visit_published && (
+            <p className="owner-meta owner-audit-verified-note">
+              Your published credibility includes a verified on-site auditor visit.
+            </p>
           )}
           {categories.filter((c) => c.is_applicable && c.score != null).length > 0 && (
             <div className="owner-score-breakdown">

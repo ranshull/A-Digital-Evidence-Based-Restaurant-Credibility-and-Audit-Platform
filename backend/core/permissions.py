@@ -25,12 +25,32 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAdminOrAuditor(permissions.BasePermission):
-    """Admin or Auditor for evidence review and scoring."""
+    """Legacy: Admin, Auditor, or Super Admin. Prefer IsAdminOrSuperAdmin or IsAuditorOrSuperAdmin."""
     def has_permission(self, request, view):
         return (
             request.user
             and request.user.is_authenticated
             and request.user.role in (Role.ADMIN, Role.AUDITOR, Role.SUPER_ADMIN)
+        )
+
+
+class IsAdminOrSuperAdmin(permissions.BasePermission):
+    """Evidence review, scoring, and owner-application admin workflows."""
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role in (Role.ADMIN, Role.SUPER_ADMIN)
+        )
+
+
+class IsAuditorOrSuperAdmin(permissions.BasePermission):
+    """On-site audit visit queue and work detail."""
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role in (Role.AUDITOR, Role.SUPER_ADMIN)
         )
 
 

@@ -404,3 +404,111 @@
   color: var(--color-text-muted);
   padding: 1.5rem 0;
 }
+
+.admin-review-finish {
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.admin-review-finish h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.admin-review-readiness {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.admin-review-ready {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.admin-review-btn-complete {
+  padding: 0.65rem 1.35rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: var(--color-success);
+  color: #fff;
+  transition: opacity 0.2s;
+}
+
+.admin-review-btn-complete:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.admin-review-btn-complete:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-review-modal {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  color: var(--color-text);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+.admin-review-modal h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.admin-review-modal p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.admin-review-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.admin-review-btn-cancel {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.admin-review-btn-confirm {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}

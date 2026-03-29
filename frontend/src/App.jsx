@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/Layout';
@@ -17,6 +17,8 @@ import OwnerEvidenceList from './pages/OwnerEvidenceList';
 import AdminApplications from './pages/admin/AdminApplications';
 import AdminApplicationDetail from './pages/admin/AdminApplicationDetail';
 import AdminEvidenceQueue from './pages/admin/AdminEvidenceQueue';
+import AdminAuditorEvidence from './pages/admin/AdminAuditorEvidence';
+import AdminAuditorEvidenceDetail from './pages/admin/AdminAuditorEvidenceDetail';
 import AdminScoring from './pages/admin/AdminScoring';
 import AdminPendingWork from './pages/admin/AdminPendingWork';
 import AdminRestaurantReview from './pages/admin/AdminRestaurantReview';
@@ -32,6 +34,14 @@ import SuperAdminEvidenceDetail from './pages/superadmin/SuperAdminEvidenceDetai
 import SuperAdminCryptoStatus from './pages/superadmin/SuperAdminCryptoStatus';
 import Profile from './pages/Profile';
 import './App.css';
+
+function EvidenceReviewLegacyRedirect() {
+  const { restaurantId } = useParams();
+  if (!restaurantId || !/^\d+$/.test(String(restaurantId))) {
+    return <Navigate to="/admin/review" replace />;
+  }
+  return <Navigate to={`/admin/evidence/${restaurantId}`} replace />;
+}
 
 function App() {
   return (
@@ -118,44 +128,64 @@ function App() {
             }
           />
           <Route
-            path="/admin/review"
-            element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
-                <Layout><AdminPendingWork /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/review/:restaurantId"
-            element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
-                <Layout><AdminRestaurantReview /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/review/work/:workId"
-            element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
-                <Layout><AdminAuditWorkDetail /></Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/admin/evidence"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
                 <Layout><AdminEvidenceQueue /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/auditor-evidence"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                <Layout><AdminAuditorEvidence /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/auditor-evidence/:workId"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                <Layout><AdminAuditorEvidenceDetail /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/evidence/:restaurantId"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                <Layout><AdminRestaurantReview /></Layout>
               </ProtectedRoute>
             }
           />
           <Route
             path="/admin/scoring"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'AUDITOR', 'SUPER_ADMIN']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
                 <Layout><AdminScoring /></Layout>
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/admin/review/work/:workId"
+            element={
+              <ProtectedRoute allowedRoles={['AUDITOR', 'SUPER_ADMIN']}>
+                <Layout><AdminAuditWorkDetail /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/review"
+            element={
+              <ProtectedRoute allowedRoles={['AUDITOR', 'SUPER_ADMIN']}>
+                <Layout><AdminPendingWork /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/review/:restaurantId"
+            element={<EvidenceReviewLegacyRedirect />}
           />
           <Route
             path="/superadmin/users"

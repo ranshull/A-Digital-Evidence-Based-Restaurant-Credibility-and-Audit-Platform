@@ -83,7 +83,7 @@ export default function SuperAdminAssignments() {
       .then(({ data }) => {
         const list = Array.isArray(data) ? data : [];
         // For admin work (evidence review / scoring), only allow assigning to Admins
-        setStaffForAssign(list.filter((u) => u.role === 'ADMIN'));
+        setStaffForAssign(list.filter((u) => u.role === 'ADMIN' || u.role === 'SUPER_ADMIN'));
       })
       .catch(() => setStaffForAssign([]));
   }, []);

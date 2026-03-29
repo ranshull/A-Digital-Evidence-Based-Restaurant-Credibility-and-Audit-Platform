@@ -52,16 +52,38 @@ export default function Layout({ children }) {
                   <Link to="/owner-dashboard" className={isActive('/owner-dashboard') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Owner Dashboard</Link>
                 )}
                 {user.role === 'AUDITOR' && (
-                  <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>My pending work</Link>
+                  <>
+                    <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Audit visit requests</Link>
+                  </>
                 )}
                 {user.role === 'ADMIN' && (
                   <>
-                    <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>My pending work</Link>
+                    <Link to="/admin/evidence" className={isActive('/admin/evidence') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Evidence queue</Link>
+                    <Link
+                      to="/admin/auditor-evidence"
+                      className={isActive('/admin/auditor-evidence') ? 'layout-nav-active' : ''}
+                      onClick={closeSidebar}
+                    >
+                      Auditor evidence
+                    </Link>
                     <Link to="/admin/applications" className={isActive('/admin/applications') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Review Applications</Link>
                   </>
                 )}
                 {user.role === 'SUPER_ADMIN' && (
                   <>
+                    <span className="layout-nav-section-label">Evidence &amp; applications</span>
+                    <Link to="/admin/evidence" className={isActive('/admin/evidence') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Evidence queue</Link>
+                    <Link
+                      to="/admin/auditor-evidence"
+                      className={isActive('/admin/auditor-evidence') ? 'layout-nav-active' : ''}
+                      onClick={closeSidebar}
+                    >
+                      Auditor evidence
+                    </Link>
+                    <Link to="/admin/applications" className={isActive('/admin/applications') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Review Applications</Link>
+                    <span className="layout-nav-section-label">Field audits</span>
+                    <Link to="/admin/review" className={isActive('/admin/review') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Audit visit requests</Link>
+                    <span className="layout-nav-section-label">Super admin</span>
                     <Link to="/superadmin/users" className={isActive('/superadmin/users') ? 'layout-nav-active' : ''} onClick={closeSidebar}>User Management</Link>
                     <Link to="/superadmin/users/create" className={isActive('/superadmin/users/create') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Create User</Link>
                     <Link to="/superadmin/logs" className={isActive('/superadmin/logs') ? 'layout-nav-active' : ''} onClick={closeSidebar}>Logs</Link>
