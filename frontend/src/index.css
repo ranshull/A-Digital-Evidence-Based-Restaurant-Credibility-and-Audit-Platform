@@ -8,6 +8,8 @@
   -moz-osx-font-smoothing: grayscale;
   --content-padding: 1.5rem;
   --font-brand: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-home-hero: 'Oswald', system-ui, sans-serif;
+  --font-home-hero-sub: 'Inter', system-ui, sans-serif;
 }
 
 [data-theme="light"] {

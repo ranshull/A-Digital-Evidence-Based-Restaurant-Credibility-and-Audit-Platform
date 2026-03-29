@@ -1,4 +1,7 @@
 .layout {
+  --layout-toggle-size: 50px;
+  --layout-toggle-offset: 15px;
+  --layout-toggle-radius: 12px;
   min-height: 100vh;
   display: flex;
   background-color: var(--color-bg-subtle);
@@ -20,15 +23,16 @@
 .layout-toggle {
   display: flex;
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: var(--layout-toggle-offset);
+  left: var(--layout-toggle-offset);
   z-index: 1001;
-  width: 48px;
-  height: 48px;
+  width: var(--layout-toggle-size);
+  height: var(--layout-toggle-size);
   padding: 0;
+  box-sizing: border-box;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: var(--layout-toggle-radius);
   cursor: pointer;
   flex-direction: column;
   align-items: center;
@@ -82,6 +86,8 @@
 
 .layout-brand {
   display: block;
+  width: 100%;
+  text-align: center;
   font-family: var(--font-brand);
   font-size: 1.45rem;
   font-weight: 600;
@@ -193,7 +199,7 @@
 .layout-main {
   flex: 1;
   padding: var(--content-padding, 1.5rem);
-  padding-top: 4rem; /* space for floating icon */
+  padding-top: calc(var(--layout-toggle-offset) + var(--layout-toggle-size) + 12px);
   width: 100%;
   min-width: 0;
   color: var(--color-text);
@@ -228,5 +234,6 @@
 
   .layout-main {
     padding: 1rem;
+    padding-top: calc(var(--layout-toggle-offset) + var(--layout-toggle-size) + 10px);
   }
 }
