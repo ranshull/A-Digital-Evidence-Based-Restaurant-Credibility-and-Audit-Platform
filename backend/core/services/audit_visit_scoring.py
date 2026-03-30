@@ -11,7 +11,11 @@ def save_audit_staging_category_scores(request, work, category_id, is_applicable
     Validate and write AuditVisitScore rows for one category on a work item.
     Returns Response on error, or None on success.
     """
-    category = RubricCategory.objects.filter(pk=category_id, is_active=True).first()
+    category = (
+        RubricCategory.objects.filter(pk=category_id, is_active=True)
+        .exclude(name__iexact='Benchmark Category')
+        .first()
+    )
     if not category:
         return Response({'detail': 'Invalid or inactive category.'}, status=status.HTTP_400_BAD_REQUEST)
 

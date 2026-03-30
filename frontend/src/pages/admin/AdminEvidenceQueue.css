@@ -1,41 +1,120 @@
+/* Evidence queue — glass panel, Inter typography, centered hero */
+
+.admin-evidence-page {
+  --admin-ev-glass-bg: rgba(255, 255, 255, 0.55);
+  --admin-ev-glass-border: rgba(255, 255, 255, 0.85);
+  --admin-ev-glass-shadow: 0 12px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --admin-ev-card-bg: rgba(255, 255, 255, 0.5);
+  --admin-ev-table-bg: rgba(255, 255, 255, 0.45);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  width: 100%;
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.25rem 0 1.5rem;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+}
+
+[data-theme='dark'] .admin-evidence-page {
+  --admin-ev-glass-bg: rgba(15, 23, 42, 0.55);
+  --admin-ev-glass-border: rgba(148, 163, 184, 0.18);
+  --admin-ev-glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --admin-ev-card-bg: rgba(30, 41, 59, 0.55);
+  --admin-ev-table-bg: rgba(15, 23, 42, 0.45);
+}
+
+.admin-evidence-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(99, 102, 241, 0.08), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 0% 80%, rgba(14, 165, 233, 0.06), transparent 45%);
+}
+
+[data-theme='dark'] .admin-evidence-page::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -15%, rgba(56, 189, 248, 0.14), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 100% 40%, rgba(99, 102, 241, 0.1), transparent 50%);
+}
+
+.admin-evidence-shell {
+  width: 100%;
+  padding: 2rem 1.75rem 2.25rem;
+  border-radius: 20px;
+  background: var(--admin-ev-glass-bg);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid var(--admin-ev-glass-border);
+  box-shadow: var(--admin-ev-glass-shadow);
+  text-align: center;
+}
+
+.admin-evidence-header {
+  margin-bottom: 1.5rem;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .admin-evidence-page h1 {
-  font-size: 1.5rem;
-  color: #f8fafc;
-  margin-bottom: 0.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin: 0 0 0.65rem;
 }
 
 .admin-evidence-intro {
-  color: #94a3b8;
-  font-size: 0.9rem;
-  margin: 0 0 1.25rem;
-  max-width: 40rem;
-  line-height: 1.5;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.55;
+  margin: 0;
+  max-width: none;
 }
 
 .admin-evidence-tabs {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  padding-bottom: 0.75rem;
+  margin-bottom: 1.35rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.85rem;
 }
 
 .admin-evidence-tabs button {
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(30, 41, 59, 0.5);
-  color: #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  color: var(--color-text);
   font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-evidence-tabs button:hover:not(.active) {
+  background: color-mix(in srgb, var(--color-bg-subtle) 85%, transparent);
 }
 
 .admin-evidence-tabs button.active {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(56, 189, 248, 0.45);
-  color: #38bdf8;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  color: var(--color-primary);
 }
 
 .admin-evidence-tabs-link {
@@ -43,8 +122,16 @@
 }
 
 .admin-evidence-empty {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
+  text-align: center;
+}
+
+.admin-loading {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  padding: 2rem 1rem;
 }
 
 .admin-evidence-card-grid {
@@ -54,13 +141,16 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
+  text-align: left;
 }
 
 .admin-evidence-rest-card {
-  background: rgba(30, 41, 59, 0.65);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px;
-  padding: 1.1rem 1.15rem;
+  background: var(--admin-ev-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.15rem 1.2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .admin-evidence-rest-card.readonly {
@@ -69,8 +159,10 @@
 
 .admin-evidence-rest-card-title {
   margin: 0 0 0.65rem;
-  font-size: 1.1rem;
-  color: #f8fafc;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
 }
 
 .admin-evidence-rest-card-meta {
@@ -82,40 +174,45 @@
 
 .admin-evidence-pill {
   font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  background: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
+  font-weight: 500;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
 }
 
 .admin-evidence-pill.assigned {
-  background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
+  background: color-mix(in srgb, var(--color-success) 18%, transparent);
+  color: var(--color-success);
 }
 
 .admin-evidence-pill.muted {
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  color: var(--color-text-muted);
 }
 
 .admin-evidence-rest-card-actions {
   display: flex;
   gap: 0.5rem;
+  justify-content: flex-start;
 }
 
 .admin-evidence-btn.primary {
-  background: rgba(56, 189, 248, 0.25);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 600;
+  font-family: inherit;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .admin-evidence-btn.primary:hover:not(:disabled) {
-  background: rgba(56, 189, 248, 0.35);
+  background: color-mix(in srgb, var(--color-primary) 32%, transparent);
 }
 
 .admin-evidence-btn.primary:disabled {
@@ -125,21 +222,25 @@
 
 .admin-evidence-summary-line {
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: var(--color-text-muted);
   margin: 0.35rem 0;
+  text-align: left;
 }
 
 .admin-evidence-breakdown {
   margin: 0.5rem 0 0;
   padding-left: 1.1rem;
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
+  text-align: left;
 }
 
 .admin-evidence-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 1200;
   display: flex;
   align-items: center;
@@ -148,18 +249,21 @@
 }
 
 .admin-evidence-modal {
-  background: #1e293b;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-radius: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
   padding: 1.5rem;
   max-width: 420px;
   width: 100%;
-  color: #e2e8f0;
+  color: var(--color-text);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
 }
 
 .admin-evidence-modal h2 {
   margin: 0 0 0.75rem;
   font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .admin-evidence-modal-actions {
@@ -171,20 +275,23 @@
 
 .admin-evidence-btn-cancel {
   padding: 0.45rem 0.85rem;
-  border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
   background: transparent;
-  color: #e2e8f0;
+  color: var(--color-text);
+  font-family: inherit;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .admin-evidence-btn-accept {
   padding: 0.45rem 0.85rem;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
-  background: rgba(34, 197, 94, 0.3);
-  color: #22c55e;
+  background: color-mix(in srgb, var(--color-success) 25%, transparent);
+  color: var(--color-success);
   font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
 }
 
@@ -192,6 +299,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -200,20 +308,23 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .admin-evidence-filters select {
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  background: rgba(30, 41, 59, 0.8);
-  color: #f8fafc;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.875rem;
 }
 
 .admin-evidence-link {
-  color: #38bdf8;
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -223,22 +334,26 @@
 }
 
 .admin-evidence-error {
-  color: #fca5a5;
+  color: var(--color-error);
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .admin-evidence-table-wrap {
   overflow-x: auto;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px;
+  background: var(--admin-ev-table-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  text-align: left;
 }
 
 .admin-evidence-table {
   width: 100%;
   border-collapse: collapse;
-  color: #e2e8f0;
+  color: var(--color-text);
   font-size: 0.9rem;
 }
 
@@ -246,12 +361,15 @@
 .admin-evidence-table td {
   padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .admin-evidence-table th {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .admin-evidence-table tbody tr:last-child td {
@@ -262,21 +380,22 @@
   width: 48px;
   height: 48px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .admin-evidence-thumb-video {
-  background: rgba(30, 41, 59, 0.8);
+  background: color-mix(in srgb, var(--color-bg-subtle) 90%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .admin-evidence-table a {
-  color: #38bdf8;
+  color: var(--color-primary);
   text-decoration: none;
+  font-weight: 500;
 }
 
 .admin-evidence-table a:hover {
@@ -284,25 +403,49 @@
 }
 
 .admin-evidence-status {
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  font-weight: 500;
+  font-size: 0.78rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
-.admin-evidence-status.pending { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
-.admin-evidence-status.approved { background: rgba(34, 197, 94, 0.25); color: #22c55e; }
-.admin-evidence-status.rejected { background: rgba(248, 113, 113, 0.25); color: #f87171; }
-.admin-evidence-status.flagged { background: rgba(167, 139, 250, 0.25); color: #a78bfa; }
+.admin-evidence-status.pending {
+  background: color-mix(in srgb, #f59e0b 22%, transparent);
+  color: #d97706;
+}
+
+[data-theme='dark'] .admin-evidence-status.pending {
+  color: #fbbf24;
+}
+
+.admin-evidence-status.approved {
+  background: color-mix(in srgb, var(--color-success) 22%, transparent);
+  color: var(--color-success);
+}
+
+.admin-evidence-status.rejected {
+  background: color-mix(in srgb, var(--color-error) 22%, transparent);
+  color: var(--color-error);
+}
+
+.admin-evidence-status.flagged {
+  background: rgba(167, 139, 250, 0.22);
+  color: #7c3aed;
+}
+
+[data-theme='dark'] .admin-evidence-status.flagged {
+  color: #a78bfa;
+}
 
 .admin-evidence-btn {
-  padding: 0.35rem 0.6rem;
+  padding: 0.38rem 0.65rem;
   margin-right: 0.35rem;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.8rem;
   cursor: pointer;
   border: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: inherit;
 }
 
 .admin-evidence-btn:disabled {
@@ -311,15 +454,15 @@
 }
 
 .admin-evidence-btn.view {
-  background: rgba(56, 189, 248, 0.2);
-  color: #38bdf8;
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
 }
 
 .admin-evidence-btn.approve {
-  background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
+  background: color-mix(in srgb, var(--color-success) 20%, transparent);
+  color: var(--color-success);
 }
 
 .admin-evidence-btn:hover:not(:disabled) {
-  opacity: 0.9;
+  opacity: 0.92;
 }

@@ -27,6 +27,10 @@ def publish_audit_visit_to_restaurant_scores(work_item: AuditorWorkItem, publish
         for avs in AuditVisitScore.objects.filter(work_item=work_item).select_related(
             'subcategory', 'category', 'scored_by'
         ):
+            # Defensive: if an older work item already contains benchmark rows,
+            # do not publish them to restaurant credibility scores.
+            if (avs.category.name or '').strip().lower() == 'benchmark category':
+                continue
             Score.objects.update_or_create(
                 restaurant=restaurant,
                 subcategory=avs.subcategory,
@@ -62,7 +66,11 @@ def audit_visit_ready_for_submit(work_item: AuditorWorkItem):
     """Return (True, '') if all active categories are covered (photos+scores or N/A)."""
     from ..models import AuditWorkCategoryPhoto
 
-    active = RubricCategory.objects.filter(is_active=True).order_by('display_order', 'id')
+    active = (
+        RubricCategory.objects.filter(is_active=True)
+        .exclude(name__iexact='Benchmark Category')
+        .order_by('display_order', 'id')
+    )
     for cat in active:
         cid = cat.id
         if cid in (work_item.category_marked_na or []):

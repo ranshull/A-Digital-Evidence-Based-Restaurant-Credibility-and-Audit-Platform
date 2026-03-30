@@ -18,6 +18,7 @@ from ..models import (
 )
 from ..services.audit_publish import audit_visit_ready_for_submit
 from ..services.audit_visit_scoring import save_audit_staging_category_scores, serialize_staging_scores
+from ..services.scoring import compute_overall_from_audit_visit_work_item
 from ..permissions import IsOwnerWithRestaurant, IsAuditorOrSuperAdmin
 from ..utils.storage import upload_to_supabase
 
@@ -90,6 +91,40 @@ class OwnerRequestAuditWorkView(APIView):
         )
 
 
+class OwnerAuditHistoryView(APIView):
+    """Owner: list published on-site audits (auditor, date, score) for their restaurant."""
+
+    permission_classes = [IsAuthenticated, IsOwnerWithRestaurant]
+
+    def get(self, request):
+        restaurant = request.user.restaurant
+        published = (
+            AuditorWorkItem.objects.filter(
+                restaurant=restaurant,
+                submission_status=AuditSubmissionStatus.PUBLISHED,
+            )
+            .select_related('assigned_to')
+            .order_by('-published_at')
+        )
+        visits = []
+        for w in published:
+            overall = compute_overall_from_audit_visit_work_item(w)
+            visits.append(
+                {
+                    'work_item_id': w.id,
+                    'auditor_name': w.assigned_to.name if w.assigned_to_id else None,
+                    'published_at': w.published_at,
+                    'overall_score': overall,
+                }
+            )
+        return Response(
+            {
+                'total_published_audits': len(visits),
+                'visits': visits,
+            }
+        )
+
+
 class OwnerAuditWorkStatusView(APIView):
     """Owner: get latest audit work status for their restaurant."""
     permission_classes = [IsAuthenticated, IsOwnerWithRestaurant]
@@ -98,12 +133,23 @@ class OwnerAuditWorkStatusView(APIView):
         restaurant = request.user.restaurant
         latest = AuditorWorkItem.objects.filter(restaurant=restaurant).order_by('-requested_at').first()
         if not latest:
-            return Response({'active': False, 'status': None})
+            return Response(
+                {
+                    'active': False,
+                    'status': None,
+                    'work_item_id': None,
+                    'can_revoke': False,
+                }
+            )
+        can_revoke = (
+            latest.status == AuditWorkStatus.PENDING and latest.assigned_to_id is None
+        )
         return Response(
             {
                 'active': latest.status in [AuditWorkStatus.PENDING, AuditWorkStatus.IN_PROGRESS],
                 'status': latest.status,
                 'work_item_id': latest.id,
+                'can_revoke': can_revoke,
             }
         )
 
@@ -114,17 +160,20 @@ class OwnerRevokeAuditWorkView(APIView):
 
     def post(self, request):
         restaurant = request.user.restaurant
-        pending = AuditorWorkItem.objects.filter(
-            restaurant=restaurant,
-            status=AuditWorkStatus.PENDING,
-            assigned_to__isnull=True,
-        ).order_by('-requested_at').first()
-        if not pending:
+        latest = AuditorWorkItem.objects.filter(restaurant=restaurant).order_by('-requested_at').first()
+        if not latest:
             return Response(
-                {'detail': 'No pending audit request found to revoke.'},
+                {'detail': 'No audit request found to revoke.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        pending.delete()
+        if latest.status != AuditWorkStatus.PENDING or latest.assigned_to_id is not None:
+            return Response(
+                {
+                    'detail': 'You can only revoke before an auditor accepts. Once an auditor accepts, the visit is in progress.',
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        latest.delete()
         return Response({'detail': 'Audit request revoked.'}, status=status.HTTP_200_OK)
 
 

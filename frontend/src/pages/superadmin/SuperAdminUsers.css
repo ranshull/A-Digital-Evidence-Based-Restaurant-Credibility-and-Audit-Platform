@@ -1,5 +1,8 @@
 .superadmin-users-page {
+  width: 100%;
   max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
@@ -7,6 +10,7 @@
   border-radius: 16px;
   backdrop-filter: blur(4px) saturate(108%);
   -webkit-backdrop-filter: blur(4px) saturate(108%);
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .superadmin-users-page {
@@ -15,6 +19,7 @@
 
 .superadmin-users-header {
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .superadmin-users-header h1 {
@@ -26,7 +31,9 @@
 .superadmin-users-sub {
   color: var(--color-text-muted);
   font-size: 0.9rem;
-  margin: 0 0 1rem;
+  margin: 0 auto 1rem;
+  max-width: 36rem;
+  line-height: 1.5;
 }
 
 .superadmin-users-toolbar {
@@ -34,11 +41,16 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
+  justify-content: center;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .superadmin-users-search {
-  flex: 1;
+  flex: 1 1 220px;
   min-width: 200px;
+  max-width: 28rem;
   padding: 0.5rem 0.75rem;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -74,6 +86,7 @@
 .superadmin-users-loading {
   color: var(--color-text-muted);
   padding: 2rem;
+  text-align: center;
 }
 
 .superadmin-users-table-wrap {
@@ -81,6 +94,9 @@
   border-radius: 12px;
   border: 1px solid var(--color-border);
   background: var(--color-bg);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .superadmin-users-table {

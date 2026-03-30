@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { restaurants } from '../api';
+import { useAuth } from '../context/AuthContext';
 import Carousel from '../components/Carousel';
 import 'leaflet/dist/leaflet.css';
 import './RestaurantDetail.css';
@@ -16,10 +17,16 @@ L.Icon.Default.mergeOptions({
 
 export default function RestaurantDetail() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [restaurant, setRestaurant] = useState(null);
   const [scoreData, setScoreData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackSending, setFeedbackSending] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [feedbackError, setFeedbackError] = useState('');
 
   const photos = restaurant?.photos ?? [];
   const menuPhotos = useMemo(() => photos.filter((p) => (p.caption || '').toLowerCase() === 'menu'), [photos]);
@@ -47,6 +54,37 @@ export default function RestaurantDetail() {
   const hasCoords = restaurant.latitude != null && restaurant.longitude != null;
   const center = hasCoords ? [Number(restaurant.latitude), Number(restaurant.longitude)] : [20.5937, 78.9629];
 
+  const isOwnListing =
+    user &&
+    user.role === 'OWNER' &&
+    user.restaurant_id != null &&
+    Number(user.restaurant_id) === Number(id);
+
+  const canSendPrivateFeedback = Boolean(user && !isOwnListing);
+
+  const submitPrivateFeedback = (e) => {
+    e.preventDefault();
+    setFeedbackMessage('');
+    setFeedbackError('');
+    const text = feedbackText.trim();
+    if (text.length < 5) {
+      setFeedbackError('Please write at least a few words.');
+      return;
+    }
+    setFeedbackSending(true);
+    restaurants
+      .submitPrivateFeedback(id, { message: text })
+      .then(({ data }) => {
+        setFeedbackMessage(data?.detail || 'Feedback sent.');
+        setFeedbackText('');
+        setFeedbackOpen(false);
+      })
+      .catch((err) => {
+        setFeedbackError(err.response?.data?.detail || 'Could not send feedback.');
+      })
+      .finally(() => setFeedbackSending(false));
+  };
+
   return (
     <div className="restaurant-detail">
       <p className="restaurant-detail-back">
@@ -56,6 +94,90 @@ export default function RestaurantDetail() {
         <h1>{restaurant.name}</h1>
         {restaurant.city && <p className="restaurant-detail-city">{restaurant.city}</p>}
       </header>
+
+      {canSendPrivateFeedback && (
+        <div className="restaurant-detail-feedback-prompt">
+          <button
+            type="button"
+            className="restaurant-detail-feedback-btn"
+            onClick={() => {
+              setFeedbackOpen(true);
+              setFeedbackError('');
+              setFeedbackMessage('');
+            }}
+          >
+            Send private feedback
+          </button>
+          <p className="restaurant-detail-feedback-hint">
+            Only you and the restaurant owner can see this; it is not shown on the public page.
+          </p>
+        </div>
+      )}
+
+      {!user && (
+        <p className="restaurant-detail-feedback-login-hint">
+          <Link to="/login">Log in</Link> to send private feedback to this restaurant.
+        </p>
+      )}
+
+      {isOwnListing && (
+        <p className="restaurant-detail-feedback-owner-note">This is your listing—private feedback is hidden from visitors.</p>
+      )}
+
+      {feedbackMessage && (
+        <div className="restaurant-detail-feedback-success" role="status">
+          {feedbackMessage}
+        </div>
+      )}
+
+      {feedbackOpen && (
+        <div
+          className="restaurant-detail-feedback-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="restaurant-feedback-title"
+          onClick={() => !feedbackSending && setFeedbackOpen(false)}
+        >
+          <div
+            className="restaurant-detail-feedback-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="restaurant-feedback-title">Private feedback</h2>
+            <p className="restaurant-detail-feedback-modal-intro">
+              Your message is sent only to the restaurant owner. It will not appear on this public page.
+            </p>
+            <form onSubmit={submitPrivateFeedback}>
+              <label className="restaurant-detail-feedback-label" htmlFor="restaurant-feedback-text">
+                Message
+              </label>
+              <textarea
+                id="restaurant-feedback-text"
+                className="restaurant-detail-feedback-textarea"
+                rows={5}
+                maxLength={2000}
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                placeholder="Write your message…"
+                disabled={feedbackSending}
+              />
+              {feedbackError && <p className="restaurant-detail-feedback-form-error">{feedbackError}</p>}
+              <div className="restaurant-detail-feedback-modal-actions">
+                <button
+                  type="button"
+                  className="restaurant-detail-feedback-cancel"
+                  onClick={() => setFeedbackOpen(false)}
+                  disabled={feedbackSending}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="restaurant-detail-feedback-submit" disabled={feedbackSending}>
+                  {feedbackSending ? 'Sending…' : 'Send'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {scoreData && (
         <section className="restaurant-detail-section restaurant-detail-score">

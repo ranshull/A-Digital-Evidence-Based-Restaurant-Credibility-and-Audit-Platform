@@ -38,9 +38,12 @@ class EvidenceUploadView(APIView):
 
         if not category_id:
             return Response({'detail': 'category_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            category = RubricCategory.objects.get(pk=category_id, is_active=True)
-        except RubricCategory.DoesNotExist:
+        category = (
+            RubricCategory.objects.filter(pk=category_id, is_active=True)
+            .exclude(name__iexact='Benchmark Category')
+            .first()
+        )
+        if not category:
             return Response({'detail': 'Invalid or inactive category.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(description) < 20:

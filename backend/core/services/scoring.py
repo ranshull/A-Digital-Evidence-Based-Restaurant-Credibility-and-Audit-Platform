@@ -30,7 +30,11 @@ def recompute_restaurant_scores(restaurant_id):
         category_data[cid]['scores'].append((s.subcategory, s.score, s.subcategory.max_score))
 
     # Get all active categories with weights
-    categories = RubricCategory.objects.filter(is_active=True).order_by('display_order', 'id')
+    categories = (
+        RubricCategory.objects.filter(is_active=True)
+        .exclude(name__iexact='Benchmark Category')
+        .order_by('display_order', 'id')
+    )
     total_weight_applicable = Decimal('0')
     category_scores = []  # (category, score_0_100, weight, normalized_weight, is_applicable)
 
@@ -125,3 +129,94 @@ def recompute_restaurant_scores(restaurant_id):
             for item in category_scores
         ],
     }
+
+
+def compute_overall_from_audit_visit_work_item(work_item):
+    """
+    Same weighting as restaurant credibility, using AuditVisitScore rows and
+    category_marked_na on the work item. Used for owner audit history (per-visit score).
+    Returns a float 0–100, or None if no applicable scored categories.
+    """
+    from ..models import AuditVisitScore
+
+    na = set(work_item.category_marked_na or [])
+    qs = AuditVisitScore.objects.filter(work_item=work_item).select_related('subcategory', 'category')
+    category_data = {}
+    for avs in qs:
+        cid = avs.category_id
+        if cid not in category_data:
+            category_data[cid] = {'scores': [], 'applicable': avs.is_category_applicable}
+        category_data[cid]['applicable'] = category_data[cid]['applicable'] and avs.is_category_applicable
+        category_data[cid]['scores'].append((avs.subcategory, avs.score, avs.subcategory.max_score))
+
+    categories = (
+        RubricCategory.objects.filter(is_active=True)
+        .exclude(name__iexact='Benchmark Category')
+        .order_by('display_order', 'id')
+    )
+    total_weight_applicable = Decimal('0')
+    category_scores = []
+
+    for cat in categories:
+        if cat.id in na:
+            category_scores.append({
+                'category': cat,
+                'score': None,
+                'weight': float(cat.weight),
+                'normalized_weight': None,
+                'is_applicable': False,
+            })
+            continue
+        data = category_data.get(cat.id)
+        if not data:
+            category_scores.append({
+                'category': cat,
+                'score': None,
+                'weight': float(cat.weight),
+                'normalized_weight': None,
+                'is_applicable': False,
+            })
+            continue
+        applicable = data['applicable']
+        if not applicable:
+            category_scores.append({
+                'category': cat,
+                'score': None,
+                'weight': float(cat.weight),
+                'normalized_weight': None,
+                'is_applicable': False,
+            })
+            continue
+
+        total_possible = sum(m for _, _, m in data['scores'])
+        total_got = sum(score for _, score, _ in data['scores'])
+        if total_possible and total_possible > 0:
+            cat_score = (Decimal(total_got) / Decimal(total_possible)) * 100
+        else:
+            cat_score = None
+        total_weight_applicable += cat.weight
+        category_scores.append({
+            'category': cat,
+            'score': float(cat_score) if cat_score is not None else None,
+            'weight': float(cat.weight),
+            'normalized_weight': None,
+            'is_applicable': True,
+        })
+
+    if total_weight_applicable > 0:
+        for item in category_scores:
+            if item['is_applicable'] and item['score'] is not None:
+                item['normalized_weight'] = float(Decimal(str(item['weight'])) / total_weight_applicable)
+
+    overall = Decimal('0')
+    for item in category_scores:
+        if item['is_applicable'] and item['score'] is not None and item['normalized_weight'] is not None:
+            overall += Decimal(str(item['score'])) * Decimal(str(item['normalized_weight']))
+
+    has_any = any(
+        item['is_applicable'] and item['score'] is not None
+        for item in category_scores
+    )
+    if not has_any:
+        return None
+    return float(overall.quantize(Decimal('0.01')))

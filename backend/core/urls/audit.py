@@ -1,6 +1,7 @@
 from django.urls import path
 from ..views.audit_views import (
     OwnerRequestAuditWorkView,
+    OwnerAuditHistoryView,
     OwnerAuditWorkStatusView,
     OwnerRevokeAuditWorkView,
     AdminAuditWorkListView,
@@ -15,6 +16,7 @@ from ..views.audit_views import (
 
 urlpatterns = [
     path('owner/request/', OwnerRequestAuditWorkView.as_view(), name='owner_request_audit_work'),
+    path('owner/history/', OwnerAuditHistoryView.as_view(), name='owner_audit_history'),
     path('owner/status/', OwnerAuditWorkStatusView.as_view(), name='owner_audit_work_status'),
     path('owner/revoke/', OwnerRevokeAuditWorkView.as_view(), name='owner_revoke_audit_work'),
     path('admin/work/', AdminAuditWorkListView.as_view(), name='admin_audit_work_list'),

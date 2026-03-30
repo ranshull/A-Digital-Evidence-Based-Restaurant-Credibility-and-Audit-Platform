@@ -19,11 +19,29 @@ ASSIGNABLE_ROLES = [Role.USER, Role.OWNER, Role.AUDITOR, Role.ADMIN]
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture_url = serializers.SerializerMethodField()
+    restaurant_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'email', 'phone', 'role', 'profile_picture_url', 'is_active', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'role', 'profile_picture_url', 'is_active', 'created_at', 'updated_at')
+        fields = (
+            'id',
+            'name',
+            'email',
+            'phone',
+            'role',
+            'profile_picture_url',
+            'restaurant_id',
+            'is_active',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('id', 'role', 'profile_picture_url', 'restaurant_id', 'is_active', 'created_at', 'updated_at')
+
+    def get_restaurant_id(self, obj):
+        if getattr(obj, 'role', None) != Role.OWNER:
+            return None
+        r = getattr(obj, 'restaurant', None)
+        return r.id if r else None
 
     def get_profile_picture_url(self, obj):
         try:

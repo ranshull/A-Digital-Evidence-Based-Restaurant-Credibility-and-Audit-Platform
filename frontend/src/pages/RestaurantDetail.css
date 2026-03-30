@@ -292,3 +292,166 @@
   color: var(--color-text-muted);
   text-align: center;
 }
+
+/* Private feedback (logged-in visitors only; not public) */
+.restaurant-detail-feedback-prompt {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.restaurant-detail-feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.15rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.restaurant-detail-feedback-btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.restaurant-detail-feedback-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.45;
+}
+
+.restaurant-detail-feedback-login-hint {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem;
+}
+
+.restaurant-detail-feedback-login-hint a {
+  font-weight: 600;
+}
+
+.restaurant-detail-feedback-owner-note {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem;
+}
+
+.restaurant-detail-feedback-success {
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  color: var(--color-success);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.restaurant-detail-feedback-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.restaurant-detail-feedback-modal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.restaurant-detail-feedback-modal h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+
+.restaurant-detail-feedback-modal-intro {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.restaurant-detail-feedback-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--color-text);
+}
+
+.restaurant-detail-feedback-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.restaurant-detail-feedback-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.restaurant-detail-feedback-form-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-error);
+}
+
+.restaurant-detail-feedback-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.restaurant-detail-feedback-cancel {
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.restaurant-detail-feedback-submit {
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+[data-theme='light'] .restaurant-detail-feedback-submit {
+  color: #fff;
+}

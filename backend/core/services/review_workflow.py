@@ -20,7 +20,11 @@ def validate_restaurant_review_complete(restaurant: Restaurant) -> Tuple[bool, O
     if Evidence.objects.filter(restaurant=restaurant, status=EvidenceStatus.PENDING).exists():
         return False, 'Pending evidence remains. Approve, reject, or flag every item first.'
 
-    active_cats = RubricCategory.objects.filter(is_active=True).prefetch_related('subcategories')
+    active_cats = (
+        RubricCategory.objects.filter(is_active=True)
+        .exclude(name__iexact='Benchmark Category')
+        .prefetch_related('subcategories')
+    )
     for cat in active_cats:
         has_approved = Evidence.objects.filter(
             restaurant=restaurant,

@@ -420,6 +420,29 @@ class RestaurantPhoto(models.Model):
         return f'{self.restaurant.name} - {self.caption or "Photo"}'
 
 
+class RestaurantPrivateFeedback(models.Model):
+    """
+    Logged-in visitors can send private text feedback to a restaurant.
+    Not shown on the public listing; only the restaurant owner sees it in the owner dashboard.
+    """
+
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name='private_feedback'
+    )
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='restaurant_private_feedback_sent'
+    )
+    message = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'restaurant_private_feedback'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Feedback to {self.restaurant.name} by {self.author_id}'
+
+
 class AuditWorkStatus(models.TextChoices):
     PENDING = 'PENDING', 'Pending'
     IN_PROGRESS = 'IN_PROGRESS', 'In progress'

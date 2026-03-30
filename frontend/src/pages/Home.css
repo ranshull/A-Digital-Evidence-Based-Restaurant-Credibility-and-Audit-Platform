@@ -79,6 +79,63 @@
   );
   padding-right: 0;
   box-sizing: border-box;
+  position: relative;
+  z-index: 101;
+}
+
+.home-nav-menu-btn {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.home-nav-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.home-nav-menu-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+/* Dim page when mobile menu open (sibling of header, outside backdrop-filter bar) */
+.home-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.4);
+  animation: home-nav-backdrop-in 0.2s ease;
+}
+
+@keyframes home-nav-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes home-nav-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .home-nav-sections {
@@ -218,6 +275,34 @@
   min-width: 0;
 }
 
+@media (max-width: 640px) {
+  .home-nav-user {
+    position: relative;
+    max-width: none;
+    gap: 0;
+    padding: 0.2rem;
+    justify-content: center;
+  }
+
+  .home-nav-user-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Visually icon-only; keep text for screen readers */
+  .home-nav-user-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
 .home-nav-user:hover {
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-bg) 78%, var(--color-text) 22%);
@@ -286,6 +371,100 @@
 .home-nav-signup:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
+}
+
+/* Tablet: second row for section links */
+@media (max-width: 720px) and (min-width: 481px) {
+  .home-nav-inner {
+    flex-wrap: wrap;
+    row-gap: 0.45rem;
+    align-items: center;
+  }
+
+  .home-nav-sections {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    padding-top: 0.4rem;
+    margin: 0 -0.15rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .home-nav-sections a {
+    font-size: 0.625rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Small screens: hamburger + dropdown under bar */
+@media (max-width: 480px) {
+  .home-nav {
+    overflow: visible;
+  }
+
+  .home-nav-inner {
+    flex-wrap: nowrap;
+    row-gap: 0;
+    gap: 0.35rem;
+    padding-right: 0.5rem;
+  }
+
+  .home-nav-menu-btn {
+    display: inline-flex;
+  }
+
+  .home-nav-sections {
+    flex: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 102;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    margin: 0;
+    padding: 0.35rem;
+    padding-top: 0.35rem;
+    overflow-x: visible;
+    overflow-y: auto;
+    max-height: min(70vh, 22rem);
+    border-radius: 0 0 16px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-top: none;
+    background: color-mix(in srgb, var(--color-bg) 22%, rgba(15, 23, 42, 0.88));
+    backdrop-filter: blur(20px) saturate(1.15);
+    -webkit-backdrop-filter: blur(20px) saturate(1.15);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .home-nav:not(.home-nav--open) .home-nav-sections {
+    display: none;
+  }
+
+  .home-nav--open .home-nav-sections {
+    display: flex;
+    animation: home-nav-panel-in 0.22s ease;
+  }
+
+  .home-nav-sections a {
+    flex-shrink: 0;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-align: left;
+  }
+
+  .home-nav-sections a:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-actions {
+    margin-left: auto;
+  }
 }
 
 .home-main {

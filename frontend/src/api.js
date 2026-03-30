@@ -57,7 +57,9 @@ export const owner = {
   },
   requestAudit: () => api.post('/audits/owner/request/'),
   auditStatus: () => api.get('/audits/owner/status/'),
+  auditHistory: () => api.get('/audits/owner/history/'),
   revokeAudit: () => api.post('/audits/owner/revoke/'),
+  feedback: () => api.get('/owner/feedback/'),
 };
 
 export const admin = {
@@ -110,6 +112,7 @@ export const restaurants = {
   list: (params = {}) => api.get('/restaurants/', { params }),
   get: (id) => api.get(`/restaurants/${id}/`),
   getScore: (id) => api.get(`/restaurants/${id}/score/`),
+  submitPrivateFeedback: (id, body) => api.post(`/restaurants/${id}/feedback/`, body),
   me: () => api.get('/restaurants/me/'),
   updateMe: (data) => api.patch('/restaurants/me/', data),
   addPhoto: (data) => api.post('/restaurants/me/photos/', data),

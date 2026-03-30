@@ -3,13 +3,45 @@
   margin: 0 auto;
   padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
   background: color-mix(in srgb, var(--color-bg-subtle) 74%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
   border-radius: 16px;
+  backdrop-filter: blur(12px) saturate(1.25);
+  -webkit-backdrop-filter: blur(12px) saturate(1.25);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.08);
+  position: relative;
+  isolation: isolate;
 }
 
 [data-theme="dark"] .audit-work-detail {
   background: color-mix(in srgb, var(--color-bg-subtle) 58%, transparent);
+  box-shadow: 0 14px 46px rgba(0, 0, 0, 0.35);
+}
+
+.audit-work-detail::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% -20%, rgba(56, 189, 248, 0.18), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 0% 50%, rgba(99, 102, 241, 0.12), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 100% 80%, rgba(14, 165, 233, 0.1), transparent 55%);
+}
+
+[data-theme="dark"] .audit-work-detail::before {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% -20%, rgba(56, 189, 248, 0.22), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 0% 50%, rgba(99, 102, 241, 0.16), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 100% 80%, rgba(14, 165, 233, 0.14), transparent 55%);
+}
+
+.audit-work-detail-header {
+  text-align: center;
 }
 
 .audit-work-detail-header h1 {
@@ -22,6 +54,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem 1rem;
   margin: 0;
   font-size: 0.95rem;
@@ -65,6 +98,7 @@
 .audit-work-detail-status-banner {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.35rem;
   padding: 0.85rem 1rem;
   margin-bottom: 1rem;
@@ -72,6 +106,7 @@
   border: 1px solid color-mix(in srgb, var(--color-success, #15803d) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-success, #15803d) 10%, var(--color-bg));
   font-size: 0.95rem;
+  text-align: center;
 }
 
 .audit-work-detail-status-banner-time {
@@ -464,6 +499,7 @@
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 1rem 0 1.25rem;
+  text-align: center;
 }
 
 .audit-work-detail-categories {

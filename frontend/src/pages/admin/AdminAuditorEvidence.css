@@ -1,18 +1,138 @@
+/* Base: shared with detail page */
 .admin-auditor-evidence-page {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: var(--content-padding, 1.5rem);
   color: var(--color-text);
 }
 
 .admin-auditor-evidence-detail {
   max-width: 960px;
+  margin: 0 auto;
+  padding: var(--content-padding, 1.5rem);
 }
 
-.admin-auditor-evidence-page h1 {
+/* List page: glass panel, Inter, centered hero */
+.admin-auditor-evidence-page--list {
+  --admin-ae-glass-bg: rgba(255, 255, 255, 0.55);
+  --admin-ae-glass-border: rgba(255, 255, 255, 0.85);
+  --admin-ae-glass-shadow: 0 12px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --admin-ae-card-bg: rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  width: 100%;
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.25rem 0 1.5rem;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+}
+
+[data-theme='dark'] .admin-auditor-evidence-page--list {
+  --admin-ae-glass-bg: rgba(15, 23, 42, 0.55);
+  --admin-ae-glass-border: rgba(148, 163, 184, 0.18);
+  --admin-ae-glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --admin-ae-card-bg: rgba(30, 41, 59, 0.45);
+}
+
+.admin-auditor-evidence-page--list::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(99, 102, 241, 0.08), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 0% 80%, rgba(14, 165, 233, 0.06), transparent 45%);
+}
+
+[data-theme='dark'] .admin-auditor-evidence-page--list::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -15%, rgba(56, 189, 248, 0.14), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 100% 40%, rgba(99, 102, 241, 0.1), transparent 50%);
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-shell {
+  width: 100%;
+  padding: 2rem 1.75rem 2.25rem;
+  border-radius: 20px;
+  background: var(--admin-ae-glass-bg);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid var(--admin-ae-glass-border);
+  box-shadow: var(--admin-ae-glass-shadow);
+  text-align: center;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-header {
+  margin: 0 auto 1.35rem;
+  max-width: 38rem;
+}
+
+.admin-auditor-evidence-page--list h1 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin: 0 0 0.65rem;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-hint {
+  color: var(--color-text-muted);
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.admin-auditor-evidence-loading-msg {
+  margin: 0;
+  padding: 2rem 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-error {
+  text-align: center;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-empty {
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-list {
+  text-align: left;
+  margin-top: 0.35rem;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-link {
+  background: var(--admin-ae-card-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 1rem 1.12rem;
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-link:hover {
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--admin-ae-card-bg));
+}
+
+.admin-auditor-evidence-page--list .admin-auditor-evidence-rest {
+  letter-spacing: -0.02em;
+}
+
+.admin-auditor-evidence-page.admin-auditor-evidence-detail h1 {
   font-size: 1.5rem;
   font-weight: 700;
+  letter-spacing: normal;
   margin: 0 0 0.75rem;
+}
+
+.admin-auditor-evidence-page.admin-auditor-evidence-detail .admin-auditor-evidence-hint {
+  margin: 0 0 1rem;
 }
 
 .admin-auditor-evidence-hint {

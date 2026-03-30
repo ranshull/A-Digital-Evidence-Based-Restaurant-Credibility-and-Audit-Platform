@@ -12,7 +12,22 @@ export default function OwnerDashboard() {
   const [auditRevokeLoading, setAuditRevokeLoading] = useState(false);
   const [auditRequestMessage, setAuditRequestMessage] = useState('');
   const [auditStatus, setAuditStatus] = useState(null);
+  const [auditCanRevoke, setAuditCanRevoke] = useState(false);
   const [showAuditConfirm, setShowAuditConfirm] = useState(false);
+  const [auditHistory, setAuditHistory] = useState(null);
+  const [privateFeedback, setPrivateFeedback] = useState(null);
+
+  const applyAuditStatusPayload = (data) => {
+    if (!data || data.status == null) {
+      setAuditStatus(null);
+      setAuditCanRevoke(false);
+      return;
+    }
+    setAuditStatus(data.status);
+    const can =
+      typeof data.can_revoke === 'boolean' ? data.can_revoke : data.status === 'PENDING';
+    setAuditCanRevoke(can);
+  };
 
   useEffect(() => {
     restaurants
@@ -36,14 +51,52 @@ export default function OwnerDashboard() {
       owner
         .auditStatus()
         .then(({ data }) => {
-          if (mounted) setAuditStatus(data?.status || null);
+          if (!mounted) return;
+          if (!data || data.status == null) {
+            setAuditStatus(null);
+            setAuditCanRevoke(false);
+          } else {
+            setAuditStatus(data.status);
+            const can =
+              typeof data.can_revoke === 'boolean' ? data.can_revoke : data.status === 'PENDING';
+            setAuditCanRevoke(can);
+          }
         })
         .catch(() => {
-          if (mounted) setAuditStatus(null);
+          if (mounted) {
+            setAuditStatus(null);
+            setAuditCanRevoke(false);
+          }
+        });
+    };
+    const loadAuditHistory = () => {
+      owner
+        .auditHistory()
+        .then(({ data }) => {
+          if (mounted) setAuditHistory(data);
+        })
+        .catch(() => {
+          if (mounted) setAuditHistory(null);
+        });
+    };
+    const loadFeedback = () => {
+      owner
+        .feedback()
+        .then(({ data }) => {
+          if (mounted) setPrivateFeedback(Array.isArray(data) ? data : []);
+        })
+        .catch(() => {
+          if (mounted) setPrivateFeedback(null);
         });
     };
     loadAuditStatus();
-    const t = setInterval(loadAuditStatus, 20000);
+    loadAuditHistory();
+    loadFeedback();
+    const t = setInterval(() => {
+      loadAuditStatus();
+      loadAuditHistory();
+      loadFeedback();
+    }, 20000);
     return () => {
       mounted = false;
       clearInterval(t);
@@ -57,6 +110,7 @@ export default function OwnerDashboard() {
   const overall = scoreData?.overall_score;
   const badge = scoreData?.badge || 'PROVISIONAL';
   const lastAudit = scoreData?.last_audit_at;
+  const auditPublishedAt = scoreData?.auditor_visit_published_at;
   const categories = scoreData?.categories || [];
   const suggestions = scoreData?.suggestions || [];
   const evidenceCounts = scoreData?.evidence_counts || {};
@@ -77,10 +131,17 @@ export default function OwnerDashboard() {
   const submitAuditRequest = () => {
     setShowAuditConfirm(false);
     setAuditRequestLoading(true);
-    owner.requestAudit()
-      .then(() => {
-        setAuditRequestMessage('Audit requested. A certified auditor will be assigned by the team.');
-        setAuditStatus('PENDING');
+    owner
+      .requestAudit()
+      .then(({ data }) => {
+        setAuditRequestMessage(
+          data?.detail || 'Audit requested. A certified auditor will be assigned by the team.',
+        );
+        return owner.auditStatus();
+      })
+      .then(({ data }) => {
+        applyAuditStatusPayload(data);
+        owner.auditHistory().then(({ data: h }) => setAuditHistory(h)).catch(() => {});
       })
       .catch((err) => {
         const msg = err.response?.data?.detail || 'Unable to request audit right now.';
@@ -91,12 +152,16 @@ export default function OwnerDashboard() {
 
   const handleRevokeAudit = () => {
     setAuditRequestMessage('');
-    const ok = window.confirm('Revoke this pending audit request?');
+    const ok = window.confirm(
+      'Revoke this pending audit request? You can do this until an auditor accepts it.',
+    );
     if (!ok) return;
     setAuditRevokeLoading(true);
-    owner.revokeAudit()
-      .then(() => {
-        setAuditStatus(null);
+    owner
+      .revokeAudit()
+      .then(() => owner.auditStatus())
+      .then(({ data }) => {
+        applyAuditStatusPayload(data);
         setAuditRequestMessage('Audit request revoked.');
       })
       .catch((err) => {
@@ -178,6 +243,16 @@ export default function OwnerDashboard() {
             <span className={`owner-score-badge ${badge === 'AUDITOR_VERIFIED' ? 'auditor-verified' : ''}`}>
               {badge === 'AUDITOR_VERIFIED' ? 'Auditor verified' : 'Provisional'}
             </span>
+            {badge === 'AUDITOR_VERIFIED' && auditPublishedAt && (
+              <span className="owner-score-audit-date">
+                Audit completed{' '}
+                {new Date(auditPublishedAt).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
+            )}
           </div>
           {lastAudit && (
             <p className="owner-meta">Last reviewed: {new Date(lastAudit).toLocaleDateString()}</p>
@@ -244,11 +319,86 @@ export default function OwnerDashboard() {
           </Link>
         </div>
       </div>
+
+      <div className="owner-card owner-feedback-card">
+        <h2>Private visitor feedback</h2>
+        <p className="owner-meta">
+          Messages from logged-in visitors on your public listing. These are not shown to anyone else.
+        </p>
+        {privateFeedback == null ? (
+          <p className="owner-meta">Loading…</p>
+        ) : privateFeedback.length === 0 ? (
+          <p className="owner-meta">No private feedback yet.</p>
+        ) : (
+          <ul className="owner-feedback-list">
+            {privateFeedback.map((f) => (
+              <li key={f.id} className="owner-feedback-item">
+                <div className="owner-feedback-meta">
+                  <strong>{f.author_name || 'Visitor'}</strong>
+                  {f.author_email && (
+                    <a href={`mailto:${f.author_email}`} className="owner-feedback-email">
+                      {f.author_email}
+                    </a>
+                  )}
+                  {f.created_at && (
+                    <span className="owner-feedback-date">
+                      {new Date(f.created_at).toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                <p className="owner-feedback-body">{f.message}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <div className="owner-card owner-audit-card">
         <h2>Audits & verification</h2>
         <p className="owner-meta">
           Request an on-site audit by a certified auditor once your profile and evidence are ready.
+          You can request a new visit after any previous visit is finished and published—only one active
+          request at a time.
         </p>
+        <p className="owner-audit-total">
+          <strong>Published on-site audits:</strong>{' '}
+          {auditHistory?.total_published_audits != null ? auditHistory.total_published_audits : '—'}
+        </p>
+        {auditHistory?.visits?.length > 0 && (
+          <div className="owner-audit-table-wrap">
+            <table className="owner-audit-table">
+              <thead>
+                <tr>
+                  <th scope="col">Auditor</th>
+                  <th scope="col">Completed</th>
+                  <th scope="col">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auditHistory.visits.map((v) => (
+                  <tr key={v.work_item_id}>
+                    <td>{v.auditor_name || '—'}</td>
+                    <td>
+                      {v.published_at
+                        ? new Date(v.published_at).toLocaleString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        : '—'}
+                    </td>
+                    <td>
+                      {v.overall_score != null ? `${Math.round(v.overall_score)}/100` : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {auditHistory && auditHistory.visits?.length === 0 && (
+          <p className="owner-meta owner-audit-empty">No published on-site audits yet.</p>
+        )}
         <div className="owner-audit-request">
           <button
             type="button"
@@ -258,7 +408,7 @@ export default function OwnerDashboard() {
           >
             {auditButtonLabel}
           </button>
-          {auditStatus === 'PENDING' && (
+          {auditCanRevoke && (
             <button
               type="button"
               className="owner-btn owner-btn-view"

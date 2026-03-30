@@ -115,42 +115,46 @@ export default function AdminEvidenceQueue() {
 
   return (
     <div className="admin-evidence-page">
-      <h1>Evidence queue</h1>
-      <p className="admin-evidence-intro">
-        Review owner uploads by restaurant: accept work to claim a restaurant, then review each item and score categories.
-      </p>
+      <div className="admin-evidence-shell">
+        <header className="admin-evidence-header">
+          <h1>Evidence queue</h1>
+          <p className="admin-evidence-intro">
+            Review owner uploads by restaurant: accept work to claim a restaurant, then review each item and score
+            categories.
+          </p>
+        </header>
 
-      <div className="admin-evidence-tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'active'}
-          className={tab === 'active' ? 'active' : ''}
-          onClick={() => setTabAndUrl('active')}
-        >
-          Active
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'completed'}
-          className={tab === 'completed' ? 'active' : ''}
-          onClick={() => setTabAndUrl('completed')}
-        >
-          Completed
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'all'}
-          className={tab === 'all' ? 'active' : ''}
-          onClick={() => setTabAndUrl('all')}
-        >
-          All evidence rows
-        </button>
-      </div>
+        <div className="admin-evidence-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'active'}
+            className={tab === 'active' ? 'active' : ''}
+            onClick={() => setTabAndUrl('active')}
+          >
+            Active
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'completed'}
+            className={tab === 'completed' ? 'active' : ''}
+            onClick={() => setTabAndUrl('completed')}
+          >
+            Completed
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'all'}
+            className={tab === 'all' ? 'active' : ''}
+            onClick={() => setTabAndUrl('all')}
+          >
+            All evidence rows
+          </button>
+        </div>
 
-      {error && <div className="admin-evidence-error">{error}</div>}
+        {error && <div className="admin-evidence-error">{error}</div>}
 
       {tab === 'active' && (
         <>
@@ -338,6 +342,7 @@ export default function AdminEvidenceQueue() {
           )}
         </>
       )}
+      </div>
 
       {confirmRestaurant && (
         <div className="admin-evidence-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="accept-ev-title">

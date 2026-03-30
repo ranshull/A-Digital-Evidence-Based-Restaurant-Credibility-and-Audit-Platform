@@ -16,38 +16,50 @@ export default function AdminAuditorEvidence() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="admin-loading">Loading auditor evidence…</div>;
+  if (loading) {
+    return (
+      <div className="admin-auditor-evidence-page admin-auditor-evidence-page--list">
+        <div className="admin-auditor-evidence-shell">
+          <p className="admin-auditor-evidence-loading-msg">Loading auditor evidence…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="admin-auditor-evidence-page">
-      <h1>Auditor evidence</h1>
-      <p className="admin-auditor-evidence-hint">
-        Review on-site auditor visits before scores are published to restaurant owners. Approve only when photos and
-        scores are correct.
-      </p>
-      {error && <div className="admin-auditor-evidence-error">{error}</div>}
-      {rows.length === 0 && !error && (
-        <p className="admin-auditor-evidence-empty">No visits awaiting review.</p>
-      )}
-      <ul className="admin-auditor-evidence-list">
-        {rows.map((r) => (
-          <li key={r.work_item_id}>
-            <Link to={`/admin/auditor-evidence/${r.work_item_id}`} className="admin-auditor-evidence-link">
-              <span className="admin-auditor-evidence-rest">{r.restaurant_name}</span>
-              <span className="admin-auditor-evidence-sub">
-                {r.submission_status}
-                {r.submitted_to_admin_at && (
-                  <span className="admin-auditor-evidence-date">
-                    {' '}
-                    · Submitted {new Date(r.submitted_to_admin_at).toLocaleString()}
-                  </span>
-                )}
-              </span>
-              <span className="admin-auditor-evidence-auditor">Auditor: {r.auditor_name || '—'}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <div className="admin-auditor-evidence-page admin-auditor-evidence-page--list">
+      <div className="admin-auditor-evidence-shell">
+        <header className="admin-auditor-evidence-header">
+          <h1>Auditor evidence</h1>
+          <p className="admin-auditor-evidence-hint">
+            Review on-site auditor visits before scores are published to restaurant owners. Approve only when photos and
+            scores are correct.
+          </p>
+        </header>
+        {error && <div className="admin-auditor-evidence-error">{error}</div>}
+        {rows.length === 0 && !error && (
+          <p className="admin-auditor-evidence-empty">No visits awaiting review.</p>
+        )}
+        <ul className="admin-auditor-evidence-list">
+          {rows.map((r) => (
+            <li key={r.work_item_id}>
+              <Link to={`/admin/auditor-evidence/${r.work_item_id}`} className="admin-auditor-evidence-link">
+                <span className="admin-auditor-evidence-rest">{r.restaurant_name}</span>
+                <span className="admin-auditor-evidence-sub">
+                  {r.submission_status}
+                  {r.submitted_to_admin_at && (
+                    <span className="admin-auditor-evidence-date">
+                      {' '}
+                      · Submitted {new Date(r.submitted_to_admin_at).toLocaleString()}
+                    </span>
+                  )}
+                </span>
+                <span className="admin-auditor-evidence-auditor">Auditor: {r.auditor_name || '—'}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

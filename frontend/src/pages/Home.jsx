@@ -1,7 +1,10 @@
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import SiteFooter from '../components/SiteFooter';
 import './Home.css';
+
+const MOBILE_NAV_MAX_PX = 480;
 
 function IconXCircle() {
   return (
@@ -96,20 +99,6 @@ function ProcessIconTarget() {
         <circle cx="12" cy="12" r="9" />
         <circle cx="12" cy="12" r="5" />
         <circle cx="12" cy="12" r="2" fill="#fff" stroke="none" />
-      </g>
-    </svg>
-  );
-}
-
-function ProcessIconPeopleThree() {
-  return (
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <g fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-        <circle cx="9" cy="7" r="3.2" />
-        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-        <circle cx="16" cy="5" r="2.8" />
-        <circle cx="20" cy="9" r="2.6" />
       </g>
     </svg>
   );
@@ -240,30 +229,98 @@ const PROCESS_STEPS = [
     desc: 'Credibility score (0-100) is calculated based on verified evidence across weighted categories. Scores are permanently recorded in a tamper-proof chain.',
     badge: '⛓️ Blockchain-inspired hash chain ensures immutability',
   },
-  {
-    step: 4,
-    icon: ProcessIconPeopleThree,
-    title: 'Consumers Make Informed Choices',
-    desc: 'Diners see transparent scores, verified evidence photos, and can scan QR codes in-restaurant to verify authenticity on the spot.',
-    badge: '📱 Mobile-friendly verification interface',
-  },
 ];
 
 export default function Home() {
   const { user } = useAuth();
   const profilePic = user?.profile_picture_url || null;
   const nameInitial = (user?.name || user?.email || '?').trim().charAt(0).toUpperCase() || '?';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth > MOBILE_NAV_MAX_PX) setMobileMenuOpen(false);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    if (window.innerWidth > MOBILE_NAV_MAX_PX) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <>
       <div className="home-page-bg-layer" aria-hidden="true" />
       <div className="home home-landing">
-        <header className="home-nav" role="banner">
+        {mobileMenuOpen && (
+          <div
+            className="home-nav-backdrop"
+            aria-hidden="true"
+            onClick={closeMobileMenu}
+          />
+        )}
+        <header
+          className={`home-nav${mobileMenuOpen ? ' home-nav--open' : ''}`}
+          role="banner"
+        >
           <div className="home-nav-inner">
             <Link to="/" className="home-brand">
               FOODAS
             </Link>
-            <nav className="home-nav-sections" aria-label="On this page">
+            <button
+              type="button"
+              className="home-nav-menu-btn"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="home-nav-sections"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileMenuOpen((o) => !o)}
+            >
+              {mobileMenuOpen ? (
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path
+                    d="M6 6l12 12M18 6L6 18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path
+                    d="M4 7h16M4 12h16M4 17h16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              )}
+            </button>
+            <nav
+              className="home-nav-sections"
+              id="home-nav-sections"
+              aria-label="On this page"
+              onClick={closeMobileMenu}
+            >
               <a href="#home-section-hero">Home</a>
               <a href="#home-section-reviews">Reviews</a>
               <a href="#home-section-process">Process</a>

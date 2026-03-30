@@ -23,7 +23,9 @@ def get_improvement_suggestions(restaurant):
         elif e['status'] == EvidenceStatus.APPROVED:
             evidence_by_category[cid]['approved'] += 1
 
-    categories = RubricCategory.objects.filter(is_active=True)
+    categories = RubricCategory.objects.filter(is_active=True).exclude(
+        name__iexact='Benchmark Category'
+    )
     for cat in categories:
         cat_evidence = evidence_by_category.get(cat.id, {'pending': 0, 'approved': 0})
         cat_info = next((b for b in breakdown if b.get('name') == cat.name), None)

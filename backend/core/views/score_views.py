@@ -154,10 +154,18 @@ class MyRestaurantScoreView(APIView):
             for b in breakdown
         )
         # Desk-only scores = PROVISIONAL; published field audit overrides to AUDITOR_VERIFIED.
-        auditor_published = AuditorWorkItem.objects.filter(
-            restaurant=restaurant,
-            submission_status=AuditSubmissionStatus.PUBLISHED,
-        ).exists()
+        latest_published_visit = (
+            AuditorWorkItem.objects.filter(
+                restaurant=restaurant,
+                submission_status=AuditSubmissionStatus.PUBLISHED,
+            )
+            .order_by('-published_at')
+            .first()
+        )
+        auditor_published = latest_published_visit is not None
+        auditor_visit_published_at = (
+            latest_published_visit.published_at if latest_published_visit else None
+        )
         if has_any and auditor_published:
             badge = 'AUDITOR_VERIFIED'
         else:
@@ -181,6 +189,7 @@ class MyRestaurantScoreView(APIView):
             'badge': badge,
             'last_audit_at': last_audit,
             'auditor_visit_published': auditor_published,
+            'auditor_visit_published_at': auditor_visit_published_at,
             'categories': breakdown,
             'evidence_counts': evidence_counts,
             'suggestions': suggestions,
